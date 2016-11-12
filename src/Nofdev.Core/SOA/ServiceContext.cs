@@ -1,0 +1,103 @@
+﻿using System.Collections.Generic;
+using System.Threading;
+
+namespace Nofdev.Core.SOA
+{
+    /// <summary>
+    /// context of service passed by HTTP Header
+    /// </summary>
+    public class ServiceContext
+    {
+        /// <summary>
+        /// dictionary key of service context
+        /// </summary>
+        public const string ServiceContextKey = "Nofdev.Core.ServiceContext-KEY";
+
+
+        private readonly Dictionary<string, object> _items = new Dictionary<string, object>();
+        private const string CallIdKey = "CALLID";
+       private static readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
+        private ServiceContext()
+        {
+            CallId = new CallId();
+        }
+
+        /// <summary>
+        /// Call ID
+        /// </summary>
+        public CallId CallId
+        {
+            get
+            {
+                return this[CallIdKey] as CallId;
+            }
+            set
+            {
+                this[CallIdKey] = value;
+            }
+        }
+
+        /// <summary>
+        /// Get items in a dictionary
+        /// </summary>
+        /// <returns></returns>
+        public IDictionary<string, object> GetItems()
+        {
+            return _items;
+        }
+
+        /// <summary>
+        /// index
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object this[string key]
+        {
+            get {
+                key = key.ToUpper();
+                return _items[key]; }
+            set {
+                key = key.ToUpper();
+                if (_items.ContainsKey(key))
+                    _items[key] = value;
+                else
+                    _items.Add(key, value);
+            }
+        }
+
+        /// <summary>
+        /// singleton
+        /// </summary>
+        public static ServiceContext Current
+        {
+            get
+            {
+                _locker.EnterReadLock();
+                var context = NeutralContext.Current.Get(ServiceContextKey) as ServiceContext;
+                if (context == null)
+                {
+                        context = NeutralContext.Current.Get(ServiceContextKey) as ServiceContext;
+                        if (context == null)
+                        {
+                            _locker.EnterWriteLock();
+                            context = new ServiceContext();
+                            NeutralContext.Current.Set(ServiceContextKey, context);
+                            _locker.ExitWriteLock();
+                        }
+
+                }
+                _locker.ExitReadLock();
+                return context;
+            }
+        }
+
+        /// <summary>
+        /// refresh call ID
+        /// </summary>
+        public void RefreshCallId()
+        {
+            CallId = (CallId == null ? new CallId() : CallId.NewSub());
+        }
+    }
+
+}
