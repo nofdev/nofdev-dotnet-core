@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nofdev.Core.SOA
+namespace Nofdev.Core.SOA.Annotations
 {
     /// <summary>
     /// BootstrapAttribute
