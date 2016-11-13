@@ -13,6 +13,10 @@ namespace Nofdev.Core.SOA
         /// </summary>
         public const string ServiceContextKey = "Nofdev.Core.ServiceContext-KEY";
 
+        /// <summary>
+        /// key of HTTP header
+        /// </summary>
+        public const string HttpHeaderKey = "SERVICE-CONTEXT";
 
         private readonly Dictionary<string, object> _items = new Dictionary<string, object>();
         private const string CallIdKey = "CALLID";
@@ -99,5 +103,4 @@ namespace Nofdev.Core.SOA
             CallId = (CallId == null ? new CallId() : CallId.NewSub());
         }
     }
-
 }
