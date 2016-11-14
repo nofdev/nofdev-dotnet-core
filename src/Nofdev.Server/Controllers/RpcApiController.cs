@@ -13,18 +13,42 @@ using Nofdev.Core.SOA;
 
 namespace Nofdev.Server.Controllers
 {
-    [Route("facade")]
-    [Route("service")]
-    [Route("micro")]
-    public class RpcApiController : Controller
+
+    public class FacadeController : RpcApiController
+    {
+        public FacadeController(ILogger<FacadeController> logger): base(logger,"facade")
+        {
+            
+        }
+    }
+
+    public class ServiceController : RpcApiController
+    {
+        public ServiceController(ILogger<ServiceController> logger): base(logger, "service")
+        {
+
+        }
+    }
+
+    public class MicroController : RpcApiController
+    {
+        public MicroController(ILogger<MicroController> logger) : base(logger, "micro")
+        {
+
+        }
+    }
+
+    public abstract class RpcApiController : Controller
     {
         private readonly ILogger<RpcApiController> _logger;
+        private readonly string _serviceLayer;
 
         public bool EnableStackTrace { get; set; } = false;
 
-        public RpcApiController(ILogger<RpcApiController> logger)
+        protected RpcApiController(ILogger<RpcApiController> logger,string serviceLayer)
         {
             _logger = logger;
+            _serviceLayer = serviceLayer;
         }
 
         [Route("[action]/{packageName}/{interfaceName}/{methodName}")]
@@ -32,8 +56,7 @@ namespace Nofdev.Server.Controllers
             string methodName, [FromBody] string @params)
         {
 
-            var serviceLayer = HttpContext.GetRouteValue("serviceLayer").ToString();//todo:
-        
+          
             var httpJsonResponse = new HttpJsonResponse<dynamic>();
 
             httpJsonResponse.callId = RefreshCallId();
@@ -44,7 +67,7 @@ namespace Nofdev.Server.Controllers
             {
                 _logger.LogDebug($"ask instance for interface {interfaceName}");
 
-                var serviceType = GetServiceType(packageName, interfaceName, serviceLayer);
+                var serviceType = GetServiceType(packageName, interfaceName, _serviceLayer);
                 var service = GetServiceInstance(serviceType);
                 _logger.LogDebug(
                     $"JSON facade call(callId:{httpJsonResponse.callId}): {interfaceName}.{methodName}{@params}");

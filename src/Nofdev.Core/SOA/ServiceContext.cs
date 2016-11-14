@@ -103,4 +103,11 @@ namespace Nofdev.Core.SOA
             CallId = (CallId == null ? new CallId() : CallId.NewSub());
         }
     }
+
+    public enum ServiceType
+    {
+        Facade,
+        Service,
+        Micro
+    }
 }

@@ -6,19 +6,25 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Logging;
 
 namespace Nofdev.Core.Util
 {
     public static class ComponentScan
     {
-        private static ILogger Logger => new LoggerFactory().CreateLogger(typeof (ComponentScan));
-
         private const string Ext = ".dll";
-        private static readonly ConcurrentDictionary<string, string[]> _fileCache = new ConcurrentDictionary<string, string[]>();
+
+        private static readonly ConcurrentDictionary<string, string[]> _fileCache =
+            new ConcurrentDictionary<string, string[]>();
+
+
+        public static IEnumerable<Assembly> GetAssemblies(string path)
+        {
+            var files = GetFiles(path);
+            return files.Select(file => AssemblyLoadContext.Default.LoadFromAssemblyPath(file));
+        }
+
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="path"></param>
         /// <param name="attributeTypes"></param>
@@ -29,17 +35,10 @@ namespace Nofdev.Core.Util
             var files = GetFiles(path);
             foreach (var file in files)
             {
-                try
+                var types = GetTypesFrom(file, attributeTypes).ToArray();
+                if (types.Length > 0)
                 {
-                    var types = GetTypesFrom(file, attributeTypes).ToArray();
-                    if (types.Length > 0)
-                    {
-                        dict.Add(file, types);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogWarning( "Load assembly file failed.",new {  Path = path, Exception = ex });
+                    dict.Add(file, types);
                 }
             }
             return dict;
@@ -54,17 +53,10 @@ namespace Nofdev.Core.Util
                 return dict;
             foreach (var file in files)
             {
-                try
+                var types = GetTypesFrom(file, typeof (T)).ToArray();
+                if (types.Length > 0)
                 {
-                    var types = GetTypesFrom(file, typeof(T)).ToArray();
-                    if (types.Length > 0)
-                    {
-                        dict.Add(file, types);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogWarning("Load assembly file failed.", new { Path = path, Exception = ex });
+                    dict.Add(file, types);
                 }
             }
             return dict;
@@ -84,17 +76,10 @@ namespace Nofdev.Core.Util
                 return dict;
             foreach (var file in files)
             {
-                try
+                var types = GetTypesFrom(file, nameSpaceRegex, typeNameRegex).ToArray();
+                if (types.Length > 0)
                 {
-                    var types = GetTypesFrom(file, nameSpaceRegex, typeNameRegex).ToArray();
-                    if (types.Length > 0)
-                    {
-                        dict.Add(file, types);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogWarning("Load assembly file failed.", new { Path = path, Exception = ex });
+                    dict.Add(file, types);
                 }
             }
             return dict;
@@ -108,7 +93,7 @@ namespace Nofdev.Core.Util
         private static string[] SearchFiles(string path)
         {
             if (File.Exists(path))
-                return new[] { path };
+                return new[] {path};
             path = path.Replace("/", "\\");
             if (!path.Contains("*") && !path.Contains("?"))
             {
@@ -117,23 +102,23 @@ namespace Nofdev.Core.Util
                     var file = new FileInfo(path);
                     if (!file.Exists)
                     {
-                            return null;
+                        return null;
                     }
-                    return new[] { path };
-
+                    return new[] {path};
                 }
 
                 var dir = new DirectoryInfo(path);
                 if (!dir.Exists)
                 {
-                        return null;
+                    return null;
                 }
                 return dir.GetFiles("*" + Ext, SearchOption.AllDirectories).Select(m => m.FullName).ToArray();
             }
 
 
             var folder = path.Substring(0, path.LastIndexOf("\\", StringComparison.Ordinal) + 1);
-            var pattern = path.Substring(path.LastIndexOf("\\", StringComparison.Ordinal) + 1, path.Length - path.LastIndexOf("\\", StringComparison.Ordinal) - 1);
+            var pattern = path.Substring(path.LastIndexOf("\\", StringComparison.Ordinal) + 1,
+                path.Length - path.LastIndexOf("\\", StringComparison.Ordinal) - 1);
             if (pattern.EndsWith("*") || pattern.EndsWith("?"))
                 pattern += Ext;
             else if (!pattern.EndsWith(Ext))
@@ -141,16 +126,31 @@ namespace Nofdev.Core.Util
 
 
             var dir2 = new DirectoryInfo(folder);
-            return !dir2.Exists ? null : dir2.GetFiles(pattern, SearchOption.AllDirectories).Select(m => m.FullName).ToArray();
+            return !dir2.Exists
+                ? null
+                : dir2.GetFiles(pattern, SearchOption.AllDirectories).Select(m => m.FullName).ToArray();
         }
 
         private static IEnumerable<Type> GetTypesFrom(string fileName, params Type[] attributeTypes)
         {
             var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(fileName);
-            return
-                 asm.GetTypes()
-                     .Where(t => t.GetTypeInfo().GetCustomAttributes(true).Any(a => attributeTypes.Any(ta => ta == a.GetType())));
+            return asm.GetTypes(attributeTypes);
+        }
 
+        public static IEnumerable<Type> GetTypes<T>(this Assembly asm) where T : Attribute
+        {
+            return asm.GetTypes(typeof (T));
+        }
+
+        public static IEnumerable<Type> GetTypes(this Assembly asm, params Type[] attributeTypes)
+        {
+            return
+                asm.GetTypes()
+                    .Where(
+                        t =>
+                            t.GetTypeInfo()
+                                .GetCustomAttributes(true)
+                                .Any(a => attributeTypes.Any(ta => ta == a.GetType())));
         }
 
         private static IEnumerable<Type> GetTypesFrom(string fileName, string nameSpaceRegex, string typeNameRegex)
@@ -159,7 +159,9 @@ namespace Nofdev.Core.Util
             var types = asm.GetTypes();
             foreach (var type in types)
             {
-                if ((string.IsNullOrWhiteSpace(nameSpaceRegex) || Regex.IsMatch(type.FullName, nameSpaceRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled)) && Regex.IsMatch(type.Name, typeNameRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled))
+                if ((string.IsNullOrWhiteSpace(nameSpaceRegex) ||
+                     Regex.IsMatch(type.FullName, nameSpaceRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled)) &&
+                    Regex.IsMatch(type.Name, typeNameRegex, RegexOptions.IgnoreCase | RegexOptions.Compiled))
                     yield return type;
             }
         }
