@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Nofdev.Core;
@@ -98,16 +97,16 @@ namespace Nofdev.Server.Controllers
                     .ToLower();
 
 
-            if (!ServiceRegistry.Instance.ContainsKey(key))
+            if (!ServiceBootstrapper.Instance.UrlTypes.ContainsKey(key))
                 key =
                     $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}{serviceLayer}.json"
                         .ToLower();
 
-            if (!ServiceRegistry.Instance.ContainsKey(key))
+            if (!ServiceBootstrapper.Instance.UrlTypes.ContainsKey(key))
             {
                 throw new InvalidOperationException($"Can not find interface {interfaceName}.");
             }
-            return ServiceRegistry.Instance[key]; 
+            return ServiceBootstrapper.Instance.UrlTypes[key]; 
         }
 
         protected virtual object GetServiceInstance(Type serviceType)

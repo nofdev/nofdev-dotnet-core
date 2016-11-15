@@ -39,7 +39,6 @@ namespace Nofdev.Server
             // Add framework services.
             services.AddMvc();
 
-          
 
             ServiceBootstrapper.Instance.Scan(_assemblies);
 

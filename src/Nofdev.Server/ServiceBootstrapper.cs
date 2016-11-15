@@ -17,7 +17,7 @@ namespace Nofdev.Server
         private static ServiceBootstrapper _instance;
         public static ServiceBootstrapper Instance => _instance ?? (_instance = new ServiceBootstrapper());
 
-        public Dictionary<string, Type> UrlTypes { get; } = new Dictionary<string, Type>();
+        public ServiceRegistry UrlTypes { get; } = new ServiceRegistry();
 
         public  void Scan(IEnumerable<Assembly> assemblies)
         {

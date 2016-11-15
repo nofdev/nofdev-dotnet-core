@@ -5,16 +5,6 @@ namespace Nofdev.Server
 {
     public  class ServiceRegistry : Dictionary<string,Type>
     {
-        protected ServiceRegistry()
-        {
-            
-        }
-        public static ServiceRegistry Instance { get; private set; }
-
-        static ServiceRegistry()
-        {
-            Instance = new ServiceRegistry();
-        }
 
         public Type Get(string key)
         {
