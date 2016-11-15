@@ -94,7 +94,7 @@ namespace Nofdev.Server.Controllers
         protected virtual  Type GetServiceType(string packageName, string interfaceName, string serviceLayer)
         {
             var key =
-                $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}.json"
+                $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}"
                     .ToLower();
 
 

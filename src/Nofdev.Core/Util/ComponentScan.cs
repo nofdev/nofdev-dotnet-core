@@ -166,11 +166,6 @@ namespace Nofdev.Core.Util
             }
         }
 
-        public static string RemovePrefixI(this string name)
-        {
-            if (name.Length > 1 && name[0] == 'I' && char.IsUpper(name[1]))
-                return name.Substring(1);
-            return name;
-        }
+
     }
 }

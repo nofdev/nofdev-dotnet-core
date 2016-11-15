@@ -7,6 +7,11 @@ namespace Nofdev.Server
 {
     public class DependencyBootstrapper
     {
+        /// <summary>
+        /// scan interface types and theirs first implement type and register them into IoC container
+        /// </summary>
+        /// <param name="assemblies"></param>
+        /// <param name="registerAction">first Type:interface,second type:implement type</param>
         public static void Scan(IEnumerable<Assembly> assemblies,Action<Type,Type> registerAction)
         {
             var interfaceList = new List<Type>();
