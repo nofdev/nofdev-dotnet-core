@@ -20,7 +20,7 @@ namespace Nofdev.Core.Util
         public static IEnumerable<Assembly> GetAssemblies(string path)
         {
             var files = GetFiles(path);
-            return files.Select(file => AssemblyLoadContext.Default.LoadFromAssemblyPath(file));
+            return files.Where(file => !file.EndsWith("Nofdev.Sample.dll")).Select(file =>  AssemblyLoadContext.Default.LoadFromAssemblyPath(file));
         }
 
 

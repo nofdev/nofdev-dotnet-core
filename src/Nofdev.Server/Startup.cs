@@ -19,6 +19,9 @@ using Nofdev.Client.Interceptors;
 
 namespace Nofdev.Server
 {
+    /*
+     * reference:《ASP.NET Core 整合Autofac和Castle实现自动AOP拦截》http://www.cnblogs.com/maxzhang1985/p/5919936.html
+     */
     public class Startup
     {
         public Startup(IHostingEnvironment env)
@@ -44,16 +47,17 @@ namespace Nofdev.Server
 
 
             var builder = new ContainerBuilder();
+            var registeredTypes = new List<Type>();
             DependencyBootstrapper.Scan(_assemblies, (i, t) =>
             {
                 builder.RegisterType(t).As(i);
+                registeredTypes.Add(i);
             });
 
-            builder.Populate(services);
-
-            var sp = new AutofacServiceProvider(builder.Build());
-            var sb = new ServiceBootstrapper(sp);
-            sb.Scan(_assemblies);
+          
+          
+            var sb = new ServiceBootstrapper();
+            sb.Scan(_assemblies,registeredTypes);
             sb.UnmatchedInterfaces.Values.ToList().ForEach(v =>
             {
                 v.ForEach(t =>
@@ -66,9 +70,9 @@ namespace Nofdev.Server
                 });
             });
 
+            builder.Populate(services);
             ApplicationContainer = builder.Build();
-            sp = new AutofacServiceProvider(ApplicationContainer);
-
+            var sp = new AutofacServiceProvider(ApplicationContainer);
             return sp;
         }
 
@@ -79,7 +83,7 @@ namespace Nofdev.Server
             loggerFactory.AddDebug();
             loggerFactory.AddNLog();
 
-            env.ConfigureNLog("nlog.config");
+            //env.ConfigureNLog("nlog.config");
 
             app.UseMvc();
 

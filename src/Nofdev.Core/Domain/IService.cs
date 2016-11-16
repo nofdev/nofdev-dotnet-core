@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Nofdev.Core.Repository;
 
 namespace Nofdev.Core.Domain
 {
@@ -50,6 +51,13 @@ namespace Nofdev.Core.Domain
         /// </summary>
         /// <returns></returns>
         IQueryable<TEntity> GetQueryable();
+
+        /// <summary>
+        /// Fluent API查询
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        IQueryFluent<TEntity> Query(Expression<Func<TEntity, bool>> filter = null);
 
         /// <summary>
         /// 通过条件判断对象是否存在

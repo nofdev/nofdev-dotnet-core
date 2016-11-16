@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using Nofdev.Core.SOA.Annotations;
 using Nofdev.Core.Util;
 
@@ -9,11 +10,9 @@ namespace Nofdev.Core.SOA
 {
     public class ServiceBootstrapper
     {
-        private readonly IServiceProvider _serviceProvider;
 
-        public ServiceBootstrapper(IServiceProvider serviceProvider)
+        public ServiceBootstrapper()
         {
-            _serviceProvider = serviceProvider;
         }
 
         //private static ServiceBootstrapper _instance;
@@ -23,18 +22,18 @@ namespace Nofdev.Core.SOA
 
         public Dictionary<string, List<Type>> UnmatchedInterfaces { get; } = new Dictionary<string, List<Type>>();
 
-        public  void Scan(IEnumerable<Assembly> assemblies)
+        public  void Scan(IEnumerable<Assembly> assemblies, ICollection<Type> excludedTypes)
         {
             var types = typeof (ServiceType).GetMembers().Select(m => m.Name).ToList();
             foreach (var asm in assemblies.Where(a => a.GetCustomAttributes<BootstrapAttribute>().Any()))
             {
                 types.ForEach(t =>
                 {
-                    Add(ScanByNameConvention(asm,t),t);
+                    Add(ScanByNameConvention(asm,t),t,excludedTypes);
                 });
-                Add(Scan<FacadeServiceAttribute>(asm),ServiceType.Facade.ToString());
-                Add(Scan<DomainServiceAttribute>(asm), ServiceType.Service.ToString());
-                Add(Scan<MicroServiceAttribute>(asm), ServiceType.Micro.ToString());
+                Add(Scan<FacadeServiceAttribute>(asm),ServiceType.Facade.ToString(), excludedTypes);
+                Add(Scan<DomainServiceAttribute>(asm), ServiceType.Service.ToString(), excludedTypes);
+                Add(Scan<MicroServiceAttribute>(asm), ServiceType.Micro.ToString(), excludedTypes);
             }
         }
 
@@ -45,13 +44,13 @@ namespace Nofdev.Core.SOA
         }
 
 
-        private  void Add(IEnumerable<Type> types, string layer)
+        private  void Add(IEnumerable<Type> types, string layer, ICollection<Type> excludedTypes)
         {
             foreach (var type in types)
             {
                 var key = GetInterfaceKey(type, layer);
 
-                if (_serviceProvider.GetService(type) == null)
+                if (!excludedTypes.Contains(type))
                 {
                     if (!UnmatchedInterfaces.ContainsKey(layer))
                     {
