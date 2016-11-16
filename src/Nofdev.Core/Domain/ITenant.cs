@@ -1,8 +1,7 @@
-﻿namespace Nofdev.Core.Domain
+namespace Nofdev.Core.Domain
 {
-
     /// <summary>
-    /// 多租户接口
+    /// ���⻧�ӿ�
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ITenant<T>
@@ -11,15 +10,15 @@
     }
 
     /// <summary>
-    /// 默认的多租户接口（ID为int)
+    /// Ĭ�ϵĶ��⻧�ӿڣ�IDΪint)
     /// </summary>
     public interface ITenant : ITenant<int>
     {
-        
+
     }
 
     /// <summary>
-    /// 租户上下文接口
+    /// �⻧�����Ľӿ�
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public interface ITenantContext<out T>
@@ -28,10 +27,10 @@
     }
 
     /// <summary>
-    /// 默认的租户上下文接口（ID为int)
+    /// Ĭ�ϵ��⻧�����Ľӿڣ�IDΪint)
     /// </summary>
     public interface ITenantContext : ITenantContext<int>
     {
-        
+
     }
 }

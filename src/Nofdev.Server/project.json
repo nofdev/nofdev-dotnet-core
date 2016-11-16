@@ -17,7 +17,9 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Nofdev.Core": "1.0.0-*",
     "Nofdev.Logging.NLog": "1.0.0-*",
-    "Autofac.Extensions.DependencyInjection": "4.0.0"
+    "Autofac.Extensions.DependencyInjection": "4.0.0",
+    "Castle.Core": "4.0.0-beta002",
+    "Nofdev.Client": "1.0.0-*"
   },
 
   "tools": {

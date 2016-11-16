@@ -8,4 +8,6 @@ namespace Nofdev.Core.SOA
 
         ServiceContext Deserialize(NameValueCollection collection);
     }
+
+ 
 }

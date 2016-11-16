@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Nofdev.Server
+namespace Nofdev.Core.Dependency
 {
     public class DependencyBootstrapper
     {
@@ -12,7 +12,8 @@ namespace Nofdev.Server
         /// </summary>
         /// <param name="assemblies"></param>
         /// <param name="registerAction">first Type:interface,second type:implement type</param>
-        public static void Scan(IEnumerable<Assembly> assemblies,Action<Type,Type> registerAction)
+        /// <returns>unmatched interface types</returns>
+        public static IEnumerable<Type> Scan(IEnumerable<Assembly> assemblies,Action<Type,Type> registerAction)
         {
             var interfaceList = new List<Type>();
             var assemblyList = assemblies.ToList();
@@ -36,6 +37,8 @@ namespace Nofdev.Server
                     });
                 });
             });
+
+            return interfaceList;
         }
     }
 }

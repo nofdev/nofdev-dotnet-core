@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Nofdev.Server
+namespace Nofdev.Core.SOA
 {
     public  class ServiceRegistry : Dictionary<string,Type>
     {

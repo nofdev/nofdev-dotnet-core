@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Nofdev.Core.SOA;
 using Nofdev.Core.SOA.Annotations;
+using Nofdev.Core.Util;
 
-namespace Nofdev.Server
+namespace Nofdev.Core.SOA
 {
     public class ServiceBootstrapper
     {
-        protected ServiceBootstrapper()
+        private readonly IServiceProvider _serviceProvider;
+
+        public ServiceBootstrapper(IServiceProvider serviceProvider)
         {
-            
+            _serviceProvider = serviceProvider;
         }
 
-        private static ServiceBootstrapper _instance;
-        public static ServiceBootstrapper Instance => _instance ?? (_instance = new ServiceBootstrapper());
+        //private static ServiceBootstrapper _instance;
+        //public static ServiceBootstrapper Instance => _instance ?? (_instance = new ServiceBootstrapper());
 
-        public ServiceRegistry UrlTypes { get; } = new ServiceRegistry();
+        public static ServiceRegistry UrlTypes { get; } = new ServiceRegistry();
+
+        public Dictionary<string, List<Type>> UnmatchedInterfaces { get; } = new Dictionary<string, List<Type>>();
 
         public  void Scan(IEnumerable<Assembly> assemblies)
         {
@@ -46,6 +50,17 @@ namespace Nofdev.Server
             foreach (var type in types)
             {
                 var key = GetInterfaceKey(type, layer);
+
+                if (_serviceProvider.GetService(type) == null)
+                {
+                    if (!UnmatchedInterfaces.ContainsKey(layer))
+                    {
+                        UnmatchedInterfaces.Add(layer,new List<Type>());
+                    }
+                    UnmatchedInterfaces[layer].Add(type);
+                    continue;
+                }
+
                 if (!UrlTypes.ContainsKey(key))
                     UrlTypes.Add(key, type);
             }
@@ -55,7 +70,7 @@ namespace Nofdev.Server
         protected  string GetInterfaceKey(Type t, string layer)
         {
             var ns = t.Namespace;
-            var typeName = RemovePrefixI(t.Name);
+            var typeName = t.Name.RemovePrefixI();
             return $"{layer}.{ns}.{typeName}".ToLower();
         }
 
@@ -65,11 +80,6 @@ namespace Nofdev.Server
                assembly.GetTypes().Where(t => t.GetTypeInfo().IsInterface && t.GetTypeInfo().GetCustomAttribute<T>() != null);
         }
 
-        public static string RemovePrefixI( string name)
-        {
-            if (name.Length > 1 && name[0] == 'I' && char.IsUpper(name[1]))
-                return name.Substring(1);
-            return name;
-        }
+   
     }
 }

@@ -54,13 +54,7 @@ namespace Nofdev.Server.Controllers
         public async Task<JsonResult> Json(string packageName, string interfaceName,
             string methodName, [FromBody] string @params)
         {
-
-          
-            var httpJsonResponse = new HttpJsonResponse<dynamic>();
-
-            httpJsonResponse.callId = RefreshCallId();
-
-         
+            var httpJsonResponse = new HttpJsonResponse<dynamic> {callId = RefreshCallId()};
             ExceptionMessage exceptionMessage = null;
             try
             {
@@ -97,16 +91,16 @@ namespace Nofdev.Server.Controllers
                     .ToLower();
 
 
-            if (!ServiceBootstrapper.Instance.UrlTypes.ContainsKey(key))
+            if (!ServiceBootstrapper.UrlTypes.ContainsKey(key))
                 key =
-                    $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}{serviceLayer}.json"
+                    $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}{serviceLayer}"
                         .ToLower();
 
-            if (!ServiceBootstrapper.Instance.UrlTypes.ContainsKey(key))
+            if (!ServiceBootstrapper.UrlTypes.ContainsKey(key))
             {
                 throw new InvalidOperationException($"Can not find interface {interfaceName}.");
             }
-            return ServiceBootstrapper.Instance.UrlTypes[key]; 
+            return ServiceBootstrapper.UrlTypes[key]; 
         }
 
         protected virtual object GetServiceInstance(Type serviceType)

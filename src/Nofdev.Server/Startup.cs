@@ -5,13 +5,17 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Autofac.Extras.DynamicProxy.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Nofdev.Core.Dependency;
+using Nofdev.Core.SOA;
 using Nofdev.Core.Util;
+using Nofdev.Client.Interceptors;
 
 namespace Nofdev.Server
 {
@@ -36,11 +40,8 @@ namespace Nofdev.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            // Add framework services.
             services.AddMvc();
 
-
-            ServiceBootstrapper.Instance.Scan(_assemblies);
 
             var builder = new ContainerBuilder();
             DependencyBootstrapper.Scan(_assemblies, (i, t) =>
@@ -49,10 +50,26 @@ namespace Nofdev.Server
             });
 
             builder.Populate(services);
-            this.ApplicationContainer = builder.Build();
 
-            // Create the IServiceProvider based on the container.
-            return new AutofacServiceProvider(this.ApplicationContainer);
+            var sp = new AutofacServiceProvider(builder.Build());
+            var sb = new ServiceBootstrapper(sp);
+            sb.Scan(_assemblies);
+            sb.UnmatchedInterfaces.Values.ToList().ForEach(v =>
+            {
+                v.ForEach(t =>
+                {
+                    builder.RegisterType(t)
+                        .AsImplementedInterfaces()
+                        .InstancePerLifetimeScope()
+                        .EnableInterfaceInterceptors()
+                        .InterceptedBy(typeof (HttpJsonProxyGeneratorInterceptor));
+                });
+            });
+
+            ApplicationContainer = builder.Build();
+            sp = new AutofacServiceProvider(ApplicationContainer);
+
+            return sp;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
