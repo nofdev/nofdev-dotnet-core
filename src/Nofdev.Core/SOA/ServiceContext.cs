@@ -78,19 +78,15 @@ namespace Nofdev.Core.SOA
             {
                 _locker.EnterReadLock();
                 var context = NeutralContext.Current.Get(ServiceContextKey) as ServiceContext;
+                _locker.ExitReadLock();
                 if (context == null)
                 {
-                        context = NeutralContext.Current.Get(ServiceContextKey) as ServiceContext;
-                        if (context == null)
-                        {
-                            _locker.EnterWriteLock();
-                            context = new ServiceContext();
-                            NeutralContext.Current.Set(ServiceContextKey, context);
-                            _locker.ExitWriteLock();
-                        }
-
+                
+                    _locker.EnterWriteLock();
+                    context = new ServiceContext();
+                    NeutralContext.Current.Set(ServiceContextKey, context);
+                    _locker.ExitWriteLock();
                 }
-                _locker.ExitReadLock();
                 return context;
             }
         }

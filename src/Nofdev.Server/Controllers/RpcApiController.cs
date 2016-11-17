@@ -12,13 +12,21 @@ using Nofdev.Core.SOA;
 
 namespace Nofdev.Server.Controllers
 {
-
+    [Route("json/[controller]")]
     public class FacadeController : RpcApiController
     {
         public FacadeController(ILogger<FacadeController> logger): base(logger,"facade")
         {
-            
         }
+
+        #region Overrides of RpcApiController
+        [Route("{packageName}/{interfaceName}/{methodName}")]
+        public override Task<JsonResult> Json(string packageName, string interfaceName, string methodName, string @params)
+        {
+            return base.Json(packageName, interfaceName, methodName, @params);
+        }
+
+        #endregion
     }
 
     public class ServiceController : RpcApiController
@@ -50,8 +58,8 @@ namespace Nofdev.Server.Controllers
             _serviceLayer = serviceLayer;
         }
 
-        [Route("[action]/{packageName}/{interfaceName}/{methodName}")]
-        public async Task<JsonResult> Json(string packageName, string interfaceName,
+        //[Route("{packageName}/{interfaceName}/{methodName}")]
+        public virtual async Task<JsonResult> Json(string packageName, string interfaceName,
             string methodName, [FromBody] string @params)
         {
             var httpJsonResponse = new HttpJsonResponse<dynamic> {callId = RefreshCallId()};

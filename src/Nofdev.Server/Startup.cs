@@ -79,6 +79,7 @@ namespace Nofdev.Server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             loggerFactory.AddNLog();
@@ -86,6 +87,24 @@ namespace Nofdev.Server
             //env.ConfigureNLog("nlog.config");
 
             app.UseMvc();
+            //app.UseMvc(r =>
+            //{
+            //    r.MapRoute(
+            //           name: "facade",
+            //           template: "json/facade",
+            //           defaults: new { controller = "Facade", action = "Json" }
+            //       );
+            //    r.MapRoute(
+            //          name: "service",
+            //          template: "json/service",
+            //          defaults: new { controller = "Service", action = "Json" }
+            //      );
+            //    r.MapRoute(
+            //          name: "micro",
+            //          template: "json/micro",
+            //          defaults: new { controller = "Micro", action = "Json" }
+            //      );
+            //});
 
             appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
         }

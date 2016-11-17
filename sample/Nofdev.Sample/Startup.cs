@@ -1,5 +1,8 @@
 ﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Nofdev.Sample
 {
@@ -9,22 +12,45 @@ namespace Nofdev.Sample
         {
            
         }
-    }
 
-    public interface IHelloFacade
-    {
-        DateTime GetNow();
-    }
+        #region Overrides of Startup
 
-    public class HelloFacade : IHelloFacade
-    {
-        #region Implementation of IHelloFacade
-
-        public DateTime GetNow()
+        public override void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
+            IApplicationLifetime appLifetime)
         {
-            return DateTime.Now;
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            base.Configure(app, env, loggerFactory, appLifetime);
+
+            //app.UseMvc(r =>
+            //{
+            //    r.MapRoute(
+            //           name: "facade",
+            //           template: "json/facade",
+            //           defaults: new { controller = "Facade", action = "Json" }
+            //       );
+            //    r.MapRoute(
+            //          name: "service",
+            //          template: "json/service",
+            //          defaults: new { controller = "Service", action = "Json" }
+            //      );
+            //    r.MapRoute(
+            //          name: "micro",
+            //          template: "json/micro",
+            //          defaults: new { controller = "Micro", action = "Json" }
+            //      );
+            //});
+        }
+
+        public override IServiceProvider ConfigureServices(IServiceCollection services)
+        {
+            return base.ConfigureServices(services);
         }
 
         #endregion
     }
+
+   
 }

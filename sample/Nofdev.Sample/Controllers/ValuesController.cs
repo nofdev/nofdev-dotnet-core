@@ -16,6 +16,12 @@ namespace Nofdev.Sample.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        [HttpGet("[action]")]
+        public DateTime GetNow()
+        {
+            return DateTime.Now;
+        }
+
         // GET api/values/5
         [HttpGet("{id}")]
         public string Get(int id)

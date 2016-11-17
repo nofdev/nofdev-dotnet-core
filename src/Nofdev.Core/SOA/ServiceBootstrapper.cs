@@ -24,16 +24,16 @@ namespace Nofdev.Core.SOA
 
         public  void Scan(IEnumerable<Assembly> assemblies, ICollection<Type> excludedTypes)
         {
-            var types = typeof (ServiceType).GetMembers().Select(m => m.Name).ToList();
+            var types = Enum.GetNames(typeof(ServiceType)).ToList();
             foreach (var asm in assemblies.Where(a => a.GetCustomAttributes<BootstrapAttribute>().Any()))
             {
                 types.ForEach(t =>
                 {
                     Add(ScanByNameConvention(asm,t),t,excludedTypes);
                 });
-                Add(Scan<FacadeServiceAttribute>(asm),ServiceType.Facade.ToString(), excludedTypes);
-                Add(Scan<DomainServiceAttribute>(asm), ServiceType.Service.ToString(), excludedTypes);
-                Add(Scan<MicroServiceAttribute>(asm), ServiceType.Micro.ToString(), excludedTypes);
+                Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade), excludedTypes);
+                Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service), excludedTypes);
+                Add(Scan<MicroServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Micro), excludedTypes);
             }
         }
 
