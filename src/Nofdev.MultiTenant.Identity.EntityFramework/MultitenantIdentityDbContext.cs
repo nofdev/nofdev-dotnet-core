@@ -11,7 +11,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     public class MultiTenantIdentityDbContext<TUser>
         :
             MultiTenantIdentityDbContext
-                <TUser, IdentityRole, string, string, IdentityUserClaim<string>, IdentityUserRole<string>,
+                <TUser, IdentityRole, string, int, IdentityUserClaim<string>, IdentityUserRole<string>,
                     MultiTenantIdentityUserLogin, IdentityRoleClaim<string>, IdentityUserToken<string>>
         where TUser : MultiTenantIdentityUser
     {

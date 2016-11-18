@@ -8,7 +8,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     /// <see cref="IdentityUserLogin{TKey}.UserId"/>
     /// and <see cref="MultiTenantIdentityUserLogin{TKey, TTenant}.TenantId"/>.
     /// </summary>
-    public class MultiTenantIdentityUserLogin : MultiTenantIdentityUserLogin<string, string>
+    public class MultiTenantIdentityUserLogin : MultiTenantIdentityUserLogin<string, int>
     {
     }
 }

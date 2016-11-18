@@ -13,7 +13,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     public class MultiTenantUserStore<TUser, TContext>
         :
             MultiTenantUserStore
-                <TUser, IdentityRole, TContext, string, string, IdentityUserClaim<string>, IdentityUserRole<string>,
+                <TUser, IdentityRole, TContext, string, int, IdentityUserClaim<string>, IdentityUserRole<string>,
                     MultiTenantIdentityUserLogin, IdentityUserToken<string>>
         where TUser : MultiTenantIdentityUser
         where TContext : DbContext

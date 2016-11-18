@@ -5,8 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +16,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     /// <typeparam name="TUser">The type of user.</typeparam>
     /// <typeparam name="TRole">The type of role.</typeparam>
     /// <typeparam name="TKey">The type of <see cref="IUser{TKey}.Id"/> for a user.</typeparam>
-    /// <typeparam name="TTenantKey">The type of <see cref="IMultiTenantUser{TKey, TTenantKey}.TenantId"/> for a user.</typeparam>
+    /// <typeparam name="TTenantKey">The type of <see cref="IMultiTenantUser{TTenantKey}.TenantId"/> for a user.</typeparam>
     /// <typeparam name="TUserLogin">The type of user login.</typeparam>
     /// <typeparam name="TUserRole">The type of user role.</typeparam>
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
@@ -61,26 +59,22 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
 
         //    return base.ValidateEntity(entityEntry, items);
         //}
+        
 
-        ///// <summary>
-        ///// Applies custom model definitions for multi-tenancy.
-        ///// </summary>
-        ///// <param name="modelBuilder">The builder that defines the model for the context being created. </param>
-        //protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        //{
-        //    base.OnModelCreating(modelBuilder);
+        #region Overrides of IdentityDbContext<TUser,TRole,TKey,TUserClaim,TUserRole,TUserLogin,TRoleClaim,TUserToken>
 
-        //    modelBuilder.Entity<TUserLogin>()
-        //        .HasKey(e => new { e.TenantId, e.LoginProvider, e.ProviderKey, e.UserId });
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        //    modelBuilder.Entity<TUser>()
-        //        .Property(u => u.UserName)
-        //        .HasColumnAnnotation(
-        //            "Index",
-        //            new IndexAnnotation(new IndexAttribute("UserNameIndex", order: 1)
-        //                {
-        //                    IsUnique = true
-        //                }));
-        //}
+            modelBuilder.Entity<TUserLogin>()
+                .HasKey(e => new { e.TenantId, e.LoginProvider, e.ProviderKey, e.UserId });
+
+            modelBuilder.Entity<TUser>()
+                .HasIndex(m => m.UserName).IsUnique();
+
+        }
+
+        #endregion
     }
 }

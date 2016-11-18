@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Nofdev.Core.Domain;
 using Remotion.Linq.Clauses;
 
 namespace Nofdev.MultiTenant.Identity.EntityFramework
@@ -21,7 +22,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     /// <typeparam name="TUser">The type of user.</typeparam>
     /// <typeparam name="TRole">The type of role.</typeparam>
     /// <typeparam name="TKey">The type of <see cref="IUser{TKey}.Id"/> for a user.</typeparam>
-    /// <typeparam name="TTenantKey">The type of <see cref="IMultiTenantUser{TKey, TTenantKey}.TenantId"/> for a user.</typeparam>
+    /// <typeparam name="TTenantKey">The type of <see cref="ITenant{TTenantKey}.TenantId"/> for a user.</typeparam>
     /// <typeparam name="TUserLogin">The type of user login.</typeparam>
     /// <typeparam name="TUserRole">The type of user role.</typeparam>
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
@@ -51,7 +52,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
 
 
         /// <summary>
-        /// Gets or sets the <see cref="IMultiTenantUser{TKey, TTenantKey}.TenantId"/> to be used in queries.
+        /// Gets or sets the <see cref="ITenant{TTenantKey}.TenantId"/> to be used in queries.
         /// </summary>
         public virtual TTenantKey TenantId { get; set; }
 

@@ -10,7 +10,7 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     /// <see cref="MultiTenantIdentityUserLogin{TKey, TTenant}.TenantId"/>.
     /// </summary>
     public class MultiTenantIdentityUser :
-        MultiTenantIdentityUser<string, string, MultiTenantIdentityUserLogin, IdentityUserRole<string>, IdentityUserClaim<string>>
+        MultiTenantIdentityUser<string, int, MultiTenantIdentityUserLogin, IdentityUserRole<string>, IdentityUserClaim<string>>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MultiTenantIdentityUser"/> class.
