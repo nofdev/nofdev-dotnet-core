@@ -12,63 +12,37 @@ using Nofdev.Core.SOA;
 
 namespace Nofdev.Server.Controllers
 {
-    [Route("json/[controller]")]
-    public class FacadeController : RpcApiController
-    {
-        public FacadeController(ILogger<FacadeController> logger): base(logger,"facade")
-        {
-        }
 
-        #region Overrides of RpcApiController
-        [Route("{packageName}/{interfaceName}/{methodName}")]
-        public override Task<JsonResult> Json(string packageName, string interfaceName, string methodName, string @params)
-        {
-            return base.Json(packageName, interfaceName, methodName, @params);
-        }
-
-        #endregion
-    }
-
-    public class ServiceController : RpcApiController
-    {
-        public ServiceController(ILogger<ServiceController> logger): base(logger, "service")
-        {
-
-        }
-    }
-
-    public class MicroController : RpcApiController
-    {
-        public MicroController(ILogger<MicroController> logger) : base(logger, "micro")
-        {
-
-        }
-    }
-
-    public abstract class RpcApiController : Controller
+    [Route("facade")]
+    [Route("service")]
+    [Route("micro")]
+    [Route("json/facade")]
+    [Route("json/service")]
+    [Route("json/micro")]
+    public  class RpcApiController : Controller
     {
         private readonly ILogger<RpcApiController> _logger;
-        private readonly string _serviceLayer;
 
         public bool EnableStackTrace { get; set; } = false;
 
-        protected RpcApiController(ILogger<RpcApiController> logger,string serviceLayer)
+        public RpcApiController(ILogger<RpcApiController> logger)
         {
             _logger = logger;
-            _serviceLayer = serviceLayer;
         }
 
-        //[Route("{packageName}/{interfaceName}/{methodName}")]
-        public virtual async Task<JsonResult> Json(string packageName, string interfaceName,
+        [Route("{packageName}/{interfaceName}/{methodName}")]
+        [Route("[action]/{packageName}/{interfaceName}/{methodName}")]
+        public  async Task<JsonResult> Json(string packageName, string interfaceName,
             string methodName, [FromBody] string @params)
         {
             var httpJsonResponse = new HttpJsonResponse<dynamic> {callId = RefreshCallId()};
             ExceptionMessage exceptionMessage = null;
             try
             {
+                var serviceLayer = GetServiceLayer();
                 _logger.LogDebug($"ask instance for interface {interfaceName}");
 
-                var serviceType = GetServiceType(packageName, interfaceName, _serviceLayer);
+                var serviceType = GetServiceType(packageName, interfaceName, serviceLayer);
                 var service = GetServiceInstance(serviceType);
                 _logger.LogDebug(
                     $"JSON facade call(callId:{httpJsonResponse.callId}): {interfaceName}.{methodName}{@params}");
@@ -92,6 +66,24 @@ namespace Nofdev.Server.Controllers
             return  new JsonResult(httpJsonResponse);
         }
 
+        protected string GetServiceLayer()
+        {
+            var segments = HttpContext.Request.Path.Value.Trim('/').Split('/');
+            var layers = Enum.GetNames(typeof (ServiceType));
+            var i = 0;
+            foreach (var segment in segments)
+            {
+                if (layers.Any(layer => string.Compare(segment, layer, StringComparison.CurrentCultureIgnoreCase) == 0))
+                {
+                    return segment;
+                }
+                i++;
+                if (i == 2)
+                    break;
+            }
+            throw new NotSupportedException("Cann't find supported service layer name.");
+        }
+
         protected virtual  Type GetServiceType(string packageName, string interfaceName, string serviceLayer)
         {
             var key =
@@ -106,7 +98,7 @@ namespace Nofdev.Server.Controllers
 
             if (!ServiceBootstrapper.UrlTypes.ContainsKey(key))
             {
-                throw new InvalidOperationException($"Can not find interface {interfaceName}.");
+                throw new InvalidOperationException($"Can not find interface {packageName}.{interfaceName} in {serviceLayer} layer.");
             }
             return ServiceBootstrapper.UrlTypes[key]; 
         }
