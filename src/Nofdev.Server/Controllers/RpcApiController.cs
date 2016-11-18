@@ -16,6 +16,9 @@ namespace Nofdev.Server.Controllers
     [Route("facade")]
     [Route("service")]
     [Route("micro")]
+    /*
+     * the following three annotations to support old pattern URLs
+     */
     [Route("json/facade")]
     [Route("json/service")]
     [Route("json/micro")]
