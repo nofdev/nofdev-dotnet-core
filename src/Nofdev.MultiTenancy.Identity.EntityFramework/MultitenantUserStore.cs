@@ -1,24 +1,23 @@
-﻿
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Nofdev.MultiTenant.Identity.EntityFramework
+namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
     /// <summary>
     ///     The store for a multi tenant user.
     /// </summary>
     /// <typeparam name="TUser">The type of user.</typeparam>
     /// <typeparam name="TContext"></typeparam>
-    public class MultiTenantUserStore<TUser, TContext>
+    public class MultitenancyUserStore<TUser, TContext>
         :
-            MultiTenantUserStore
+            MultitenancyUserStore
                 <TUser, IdentityRole, TContext, string, int, IdentityUserClaim<string>, IdentityUserRole<string>,
-                    MultiTenantIdentityUserLogin, IdentityUserToken<string>>
-        where TUser : MultiTenantIdentityUser
+                    MultitenancyIdentityUserLogin, IdentityUserToken<string>>
+        where TUser : MultitenancyIdentityUser
         where TContext : DbContext
     {
-        public MultiTenantUserStore(TContext context, IdentityErrorDescriber describer = null)
+        public MultitenancyUserStore(TContext context, IdentityErrorDescriber describer = null)
             : base(context, describer)
         {
         }

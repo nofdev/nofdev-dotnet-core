@@ -1,19 +1,18 @@
-﻿
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Nofdev.MultiTenant.Identity.EntityFramework
+namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
     /// <summary>
     ///     Identity <see cref="DbContext" /> for multi tenant user accounts.
     /// </summary>
     /// <typeparam name="TUser">The type of user.</typeparam>
-    public class MultiTenantIdentityDbContext<TUser>
+    public class MultitenancyIdentityDbContext<TUser>
         :
-            MultiTenantIdentityDbContext
+            MultitenancyIdentityDbContext
                 <TUser, IdentityRole, string, int, IdentityUserClaim<string>, IdentityUserRole<string>,
-                    MultiTenantIdentityUserLogin, IdentityRoleClaim<string>, IdentityUserToken<string>>
-        where TUser : MultiTenantIdentityUser
+                    MultitenancyIdentityUserLogin, IdentityRoleClaim<string>, IdentityUserToken<string>>
+        where TUser : MultitenancyIdentityUser
     {
         ///// <summary>
         ///// Applies custom model definitions for multi-tenancy.

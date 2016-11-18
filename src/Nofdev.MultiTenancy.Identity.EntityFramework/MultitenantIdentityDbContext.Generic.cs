@@ -8,7 +8,7 @@ using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Nofdev.MultiTenant.Identity.EntityFramework
+namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
     /// <summary>
     /// Identity <see cref="DbContext"/> for multi tenant user accounts.
@@ -16,18 +16,18 @@ namespace Nofdev.MultiTenant.Identity.EntityFramework
     /// <typeparam name="TUser">The type of user.</typeparam>
     /// <typeparam name="TRole">The type of role.</typeparam>
     /// <typeparam name="TKey">The type of <see cref="IUser{TKey}.Id"/> for a user.</typeparam>
-    /// <typeparam name="TTenantKey">The type of <see cref="IMultiTenantUser{TTenantKey}.TenantId"/> for a user.</typeparam>
+    /// <typeparam name="TTenantKey">The type of <see cref="IMultitenancyUser{TTenantKey}.TenantId"/> for a user.</typeparam>
     /// <typeparam name="TUserLogin">The type of user login.</typeparam>
     /// <typeparam name="TUserRole">The type of user role.</typeparam>
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
     /// <typeparam name="TRoleClaim"></typeparam>
     /// <typeparam name="TUserToken"></typeparam>
-    public class MultiTenantIdentityDbContext<TUser, TRole, TKey, TTenantKey,  TUserClaim,TUserRole,TUserLogin,  TRoleClaim, TUserToken>
+    public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey,  TUserClaim,TUserRole,TUserLogin,  TRoleClaim, TUserToken>
         : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin,TRoleClaim, TUserToken>
-        where TUser : MultiTenantIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
+        where TUser : MultitenancyIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
         where TRole : IdentityRole<TKey, TUserRole,TRoleClaim>
         where TRoleClaim : IdentityRoleClaim<TKey>
-        where TUserLogin : MultiTenantIdentityUserLogin<TKey, TTenantKey>, new()
+        where TUserLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
           where TUserToken : IdentityUserToken<TKey>
