@@ -3,16 +3,16 @@ namespace Nofdev.Core.Domain
     /// <summary>
     /// 多租户接口
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ITenant<T>
+    /// <typeparam name="TTenantKey"></typeparam>
+    public interface ITenant<TTenantKey>
     {
-        T TenantId { get; set; }
+        TTenantKey TenantId { get; set; }
     }
 
     /// <summary>
-    /// 默认的多租户接口（ID为int)
+    /// 默认的多租户接口
     /// </summary>
-    public interface ITenant : ITenant<int>
+    public interface ITenant : ITenant<string>
     {
 
     }
@@ -29,7 +29,7 @@ namespace Nofdev.Core.Domain
     /// <summary>
     /// 默认的租户上下文接口（ID为int)
     /// </summary>
-    public interface ITenantContext : ITenantContext<int>
+    public interface ITenantContext : ITenantContext<string>
     {
 
     }

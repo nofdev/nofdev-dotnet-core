@@ -6,7 +6,7 @@ namespace Nofdev.Core.Domain
     {
         public static void AssignTenantId(this ITenantContext tenantContext, object entity)
         {
-            if (tenantContext == null || tenantContext.TenantId <= 0)
+            if (string.IsNullOrWhiteSpace(tenantContext?.TenantId))
                 return;
             var o = entity as ITenant;
             if (o != null)
@@ -17,7 +17,7 @@ namespace Nofdev.Core.Domain
 
         public static void CheckTenant(this ITenantContext tenantContext, object entity)
         {
-            if (tenantContext == null || tenantContext.TenantId <= 0)
+            if (string.IsNullOrWhiteSpace(tenantContext?.TenantId))
                 return;
             var o = entity as ITenant;
             if (o != null)
