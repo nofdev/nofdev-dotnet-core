@@ -3,12 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Nofdev.Sample.Proxy;
 
 namespace Nofdev.Sample.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private readonly IRemoteHelloFacade _helloFacade;
+
+        public ValuesController(IRemoteHelloFacade helloFacade)
+        {
+            _helloFacade = helloFacade;
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -19,7 +27,7 @@ namespace Nofdev.Sample.Controllers
         [HttpGet("[action]")]
         public DateTime GetNow()
         {
-            return DateTime.Now;
+            return _helloFacade.GetNow();
         }
 
         // GET api/values/5

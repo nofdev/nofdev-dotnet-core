@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy.Core;
+using Castle.DynamicProxy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using Nofdev.Client;
 using Nofdev.Core.Dependency;
 using Nofdev.Core.SOA;
 using Nofdev.Core.Util;
@@ -34,6 +36,8 @@ namespace Nofdev.Server
             Configuration = builder.Build();
 
             _assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
+
+            Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
         }
 
         public IConfigurationRoot Configuration { get; protected set; }
@@ -47,6 +51,10 @@ namespace Nofdev.Server
 
 
             var builder = new ContainerBuilder();
+            builder.RegisterType<HttpJsonProxy>();
+            builder.RegisterType<HttpJsonProxyGeneratorInterceptor>();
+
+
             var registeredTypes = new List<Type>();
             DependencyBootstrapper.Scan(_assemblies, (i, t) =>
             {
@@ -62,9 +70,9 @@ namespace Nofdev.Server
             {
                 v.ForEach(t =>
                 {
-                    builder.RegisterType(t)
-                        .AsImplementedInterfaces()
-                        .InstancePerLifetimeScope()
+                    builder.RegisterInstance(GenerateProxy(t)).As(t)
+                        //.AsImplementedInterfaces()
+                        //.InstancePerLifetimeScope()
                         .EnableInterfaceInterceptors()
                         .InterceptedBy(typeof (HttpJsonProxyGeneratorInterceptor));
                 });
@@ -74,6 +82,11 @@ namespace Nofdev.Server
             ApplicationContainer = builder.Build();
             var sp = new AutofacServiceProvider(ApplicationContainer);
             return sp;
+        }
+
+        protected object GenerateProxy(Type type)
+        {
+            return new ProxyGenerator().CreateInterfaceProxyWithoutTarget(type);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

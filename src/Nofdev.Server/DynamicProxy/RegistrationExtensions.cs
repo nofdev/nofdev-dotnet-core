@@ -192,8 +192,8 @@ namespace Autofac.Extras.DynamicProxy.Core
 
 
                 e.Instance = options == null
-                ? ProxyGenerator.CreateInterfaceProxyWithTarget(theInterface, interfaces, e.Instance, interceptors)
-                : ProxyGenerator.CreateInterfaceProxyWithTarget(theInterface, interfaces, e.Instance, options, interceptors);
+                ? ProxyGenerator.CreateInterfaceProxyWithTarget(theInterface, null, e.Instance, interceptors)
+                : ProxyGenerator.CreateInterfaceProxyWithTarget(theInterface, null, e.Instance, options, interceptors);
             });
 
             return registration;

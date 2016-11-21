@@ -29,7 +29,7 @@ namespace Nofdev.Core.Util
                     assemblies.Add(Assembly.Load(name));
                     //yield return Assembly.Load(name);
                 }
-                catch
+                catch(Exception ex)
                 {
                     //todo
                 }

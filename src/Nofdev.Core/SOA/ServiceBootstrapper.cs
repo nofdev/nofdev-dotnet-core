@@ -22,27 +22,37 @@ namespace Nofdev.Core.SOA
 
         public Dictionary<string, List<Type>> UnmatchedInterfaces { get; } = new Dictionary<string, List<Type>>();
 
-        public  void Scan(IEnumerable<Assembly> assemblies, ICollection<Type> excludedTypes)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="assemblies"></param>
+        /// <param name="iocTypes">types were registered in IoC container</param>
+        public  void Scan(IEnumerable<Assembly> assemblies, ICollection<Type> iocTypes)
         {
             var types = Enum.GetNames(typeof(ServiceType)).ToList();
-            foreach (var asm in assemblies.Where(a => a.GetCustomAttributes<BootstrapAttribute>().Any()))
+            foreach (var asm in assemblies)//.Where(a => a.GetCustomAttributes<BootstrapAttribute>().Any()))
             {
                 types.ForEach(t =>
                 {
-                    Add(ScanByNameConvention(asm,t),t,excludedTypes);
+                    Add(ScanByNameConvention(asm,t),t,iocTypes);
                 });
-                Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade), excludedTypes);
-                Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service), excludedTypes);
-                Add(Scan<MicroServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Micro), excludedTypes);
+                Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade), iocTypes);
+                Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service), iocTypes);
+                Add(Scan<MicroServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Micro), iocTypes);
             }
         }
 
         private  IEnumerable<Type> ScanByNameConvention(Assembly assembly,params string[] suffixes)
         {
-            return 
-                assembly.GetTypes().Where(t => t.GetTypeInfo().IsInterface && suffixes.Any(s => t.Name.EndsWith(s)));
+            return
+                ScanByNameConvention(assembly.GetTypes(),suffixes);
         }
 
+        private IEnumerable<Type> ScanByNameConvention(IEnumerable<Type> types, params string[] suffixes)
+        {
+            return
+                types.Where(t => t.GetTypeInfo().IsInterface && suffixes.Any(s => t.Name.EndsWith(s)));
+        }
 
         private  void Add(IEnumerable<Type> types, string layer, ICollection<Type> excludedTypes)
         {
@@ -54,9 +64,10 @@ namespace Nofdev.Core.SOA
                 {
                     if (!UnmatchedInterfaces.ContainsKey(layer))
                     {
-                        UnmatchedInterfaces.Add(layer,new List<Type>());
+                        UnmatchedInterfaces.Add(layer, new List<Type>());
                     }
-                    UnmatchedInterfaces[layer].Add(type);
+                    if(!UnmatchedInterfaces[layer].Contains(type))
+                     UnmatchedInterfaces[layer].Add(type);
                     continue;
                 }
 
@@ -75,10 +86,13 @@ namespace Nofdev.Core.SOA
 
         private IEnumerable<Type> Scan<T>(Assembly assembly) where T : ServiceDefinationAttribute
         {
-            return
-               assembly.GetTypes().Where(t => t.GetTypeInfo().IsInterface && t.GetTypeInfo().GetCustomAttribute<T>() != null);
+            return Scan<T>(assembly.GetTypes());
         }
 
-   
+        private IEnumerable<Type> Scan<T>(IEnumerable<Type> types) where T : ServiceDefinationAttribute
+        {
+            return
+               types.Where(t => t.GetTypeInfo().IsInterface && t.GetTypeInfo().GetCustomAttribute<T>() != null);
+        }
     }
 }

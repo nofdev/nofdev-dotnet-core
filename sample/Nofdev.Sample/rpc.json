@@ -1,0 +1,9 @@
+﻿{
+  "services": [
+    {
+      "namespace": "Nofdev.Sample.Proxy",
+      "baseUrl": "http://somewherenotfound.com/",
+      "protocol": "json"
+    }
+  ]
+}
