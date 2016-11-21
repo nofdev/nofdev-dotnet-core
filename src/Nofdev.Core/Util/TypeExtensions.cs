@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Nofdev.Core.Util
+﻿namespace Nofdev.Core.Util
 {
     public static class TypeExtensions
     {

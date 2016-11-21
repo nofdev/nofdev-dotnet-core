@@ -50,8 +50,7 @@ namespace Nofdev.Repository.EntityFramework
 
         protected override T DoGet<T>(params object[] keyValues)
         {
-            //return _context.Set<T>().Find(keyValues);
-            throw new NotSupportedException();
+           return _context.Find<T>(keyValues);
         }
 
 
@@ -78,12 +77,12 @@ namespace Nofdev.Repository.EntityFramework
 
         public int Execute(string sql, params object[] parameters)
         {
-            throw new NotSupportedException();
+           return _context.Database.ExecuteSqlCommand(sql, parameters);
         }
 
         public Task<int> ExecuteAsync(string sql, params object[] parameters)
         {
-            throw new NotSupportedException();
+            return _context.Database.ExecuteSqlCommandAsync(sql,default(CancellationToken), parameters);
         }
     }
 }

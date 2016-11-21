@@ -15,6 +15,13 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Repository.EntityFra
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Multitenancy.Identity.EntityFramework", "Nofdev.MultiTenancy.Identity.EntityFramework\Nofdev.Multitenancy.Identity.EntityFramework.xproj", "{EA20879E-819C-45AC-96E4-A1525E5A7EF7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{34D24CA5-4C84-48FF-B758-38BFA6ACF84E}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{482661E1-E998-4884-8119-25C9FCE2B427}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +55,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{ACAA3410-2C19-4BBF-8AA3-D3A8522FEDBC} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{B1687DE9-5638-49AE-BD34-A27A8D6DF931} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{7CE3E13D-A884-4E65-961F-04A87652151C} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{EA20879E-819C-45AC-96E4-A1525E5A7EF7} = {482661E1-E998-4884-8119-25C9FCE2B427}
 	EndGlobalSection
 EndGlobal

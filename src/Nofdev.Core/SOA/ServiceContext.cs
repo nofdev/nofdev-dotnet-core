@@ -20,6 +20,7 @@ namespace Nofdev.Core.SOA
 
         private readonly Dictionary<string, object> _items = new Dictionary<string, object>();
         private const string CallIdKey = "CALLID";
+        private const string TenantContextKey = "TENANT";
        private static readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         private ServiceContext()
         {
@@ -38,6 +39,21 @@ namespace Nofdev.Core.SOA
             set
             {
                 this[CallIdKey] = value;
+            }
+        }
+
+        /// <summary>
+        /// User
+        /// </summary>
+        public User User
+        {
+            get
+            {
+                return this[TenantContextKey] as User;
+            }
+            set
+            {
+                this[TenantContextKey] = value;
             }
         }
 

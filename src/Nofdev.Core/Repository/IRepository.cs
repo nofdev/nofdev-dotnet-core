@@ -81,5 +81,6 @@ namespace Nofdev.Core.Repository
         Task<TEntity> GetAsync(CancellationToken cancellationToken, params object[] keyValues);
         Task<bool> DeleteAsync(params object[] keyValues);
         Task<bool> DeleteAsync(CancellationToken cancellationToken, params object[] keyValues);
+        IRepositoryAsync<T> GetRepositoryAsync<T>() where T : class, new();
     }
 }

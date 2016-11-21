@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Nofdev.Core.Domain;
+using Nofdev.Core.Util;
 
 namespace Nofdev.Core.Repository
 {
@@ -22,9 +22,15 @@ namespace Nofdev.Core.Repository
         /// <returns></returns>
         T Get<T>(params object[] keyValues) where T: class,new();
 
+        ///// <summary>
+        ///// 通过主键获取对象
+        ///// </summary>
+        ///// <param name="keyValues"></param>
+        ///// <returns></returns>
+        //Task<T> GetAsync<T>(params object[] keyValues) where T : class, new();
+
         IQueryable<T> Queryable<T>() where T : class, new();
 
-        ITenantContext TenantContext { get; set; }
     }
 
     public interface IRepositoryContextAsync : IRepositoryContext
@@ -45,7 +51,7 @@ namespace Nofdev.Core.Repository
 
         public void Add<T>(T entity) where T : class, new()
         {
-            TenantContext.AssignTenantId(entity);
+            entity.AssignTenantId();
 
             DoAdd(entity);
 
@@ -55,7 +61,7 @@ namespace Nofdev.Core.Repository
 
         public void Update<T>(T entity) where T : class, new()
         {
-            TenantContext.CheckTenant(entity);
+            entity.CheckTenant();
             DoUpdate(entity);
         }
 
@@ -63,7 +69,7 @@ namespace Nofdev.Core.Repository
 
         public void Delete<T>(T entity) where T : class, new()
         {
-            TenantContext.CheckTenant(entity);
+           entity.CheckTenant();
             DoDelete(entity);
         }
 
@@ -78,7 +84,7 @@ namespace Nofdev.Core.Repository
         public T Get<T>(params object[] keyValues) where T : class, new()
         {
             var entity = DoGet<T>(keyValues);
-            TenantContext.CheckTenant(entity);
+           entity.CheckTenant();
             return entity;
         }
 
@@ -92,7 +98,7 @@ namespace Nofdev.Core.Repository
 
         protected abstract IQueryable<T> GetQueryable<T>() where T : class, new();
 
-        public ITenantContext TenantContext { get; set; }
+
 
         #endregion
     }

@@ -20,11 +20,21 @@ namespace Nofdev.Core.Util
         public static IEnumerable<Assembly> GetAssemblies(string path)
         {
             var files = GetFiles(path);
+            var assemblies = new List<Assembly>();
             foreach (var file in files)
             {
-                var name = AssemblyLoadContext.GetAssemblyName(file);
-                yield return Assembly.Load(name);
+                try
+                {
+                    var name = AssemblyLoadContext.GetAssemblyName(file);
+                    assemblies.Add(Assembly.Load(name));
+                    //yield return Assembly.Load(name);
+                }
+                catch
+                {
+                    //todo
+                }
             }
+            return assemblies;
             //return files.Select(file =>  AssemblyLoadContext.Default.LoadFromAssemblyPath(file));
         }
 

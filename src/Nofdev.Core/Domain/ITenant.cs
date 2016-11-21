@@ -17,20 +17,4 @@ namespace Nofdev.Core.Domain
 
     }
 
-    /// <summary>
-    /// 租户上下文接口
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ITenantContext<out T>
-    {
-        T TenantId { get; }
-    }
-
-    /// <summary>
-    /// 默认的租户上下文接口（ID为int)
-    /// </summary>
-    public interface ITenantContext : ITenantContext<string>
-    {
-
-    }
 }

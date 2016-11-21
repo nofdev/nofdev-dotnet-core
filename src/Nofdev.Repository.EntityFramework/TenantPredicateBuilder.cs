@@ -5,17 +5,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Nofdev.Core.Domain;
+using Nofdev.Core.SOA;
 using static LinqKit.PredicateBuilder;
 
 namespace Nofdev.Repository.EntityFramework
 {
     public static class TenantPredicateBuilder
     {
-        public static Expression<Func<TEntity, bool>> MakeExpression<TEntity>(this ITenantContext tenantContext)
+        public static Expression<Func<TEntity, bool>> MakeExpression<TEntity>(this User user)
         {
-            if (typeof(TEntity).GetTypeInfo().IsSubclassOf(typeof(ITenant)) && tenantContext?.TenantId > 0)
+            //todo:if ITenant<>
+            if (typeof(TEntity).GetTypeInfo().IsSubclassOf(typeof(ITenant)) && !string.IsNullOrWhiteSpace(user?.TenantId))
             {
-                Expression<Func<ITenant, bool>> q = i => i.TenantId == tenantContext.TenantId;
+                Expression<Func<ITenant, bool>> q = i => i.TenantId == user.TenantId;
                 var filter = q.ChangeParameter<TEntity>();
                 return filter;
             }

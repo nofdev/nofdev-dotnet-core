@@ -152,6 +152,12 @@ namespace Nofdev.Repository.EntityFramework
 
         public IRepository<T> GetRepository<T>() where T : class, new()
         {
+            return GetRepositoryAsync<T>();
+        }
+
+
+        public IRepositoryAsync<T> GetRepositoryAsync<T>() where T : class, new()
+        {
             if (_repositories == null)
             {
                 _repositories = new Dictionary<string, dynamic>();
@@ -173,7 +179,7 @@ namespace Nofdev.Repository.EntityFramework
 
         public IQueryFluent<TEntity> Query(Expression<Func<TEntity, bool>> query = null)
         { 
-            var filter = _context.TenantContext.MakeExpression<TEntity>();
+            var filter = Nofdev.Core.SOA.ServiceContext.Current.User.MakeExpression<TEntity>();
             if (query != null)
                 filter = filter.And(query);
             return new QueryFluent<TEntity>(this, filter);
@@ -270,6 +276,7 @@ namespace Nofdev.Repository.EntityFramework
         {
             return await Select(filter, orderBy, includes, page, pageSize).ToListAsync();
         }
+
     }
 
 }
