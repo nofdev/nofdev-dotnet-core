@@ -33,7 +33,6 @@ namespace Nofdev.Client
                 var paras = isneedargs?ProxyStrategy.GetParams(args):null;
                 using (var hc = new HttpClient())
                 {
-                    ServiceContext.Current.CallId = new CallId();
                     var items = new ServiceContextJsonSerializer().ToNameValueCollection(ServiceContext.Current);
                     foreach (var key in items.AllKeys)
                     {
