@@ -31,7 +31,8 @@ namespace Nofdev.Client
                 {
                     if (location.Namespace == ns)
                     {
-                        location.Layer = GetServiceType(type).ToString().ToLower();
+
+                        location.Layer = Enum.GetName(typeof(ServiceType), GetServiceType(type)).ToLower();
                         TypeLocations.Add(key, location);
                         return location;
                     }
