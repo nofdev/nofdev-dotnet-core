@@ -26,7 +26,7 @@ namespace Nofdev.Core.SOA
         /// Get a GUID without connective mark '-'
         /// </summary>
         /// <returns></returns>
-        public static string NewGuid()
+        public static string New()
         {
             return Guid.NewGuid().ToString("N");
         }
@@ -36,7 +36,7 @@ namespace Nofdev.Core.SOA
         /// </summary>
         public CallId()
         {
-            var guid = NewGuid();
+            var guid = New();
             Id = Parent = Root = guid;
         }
 
@@ -58,7 +58,7 @@ namespace Nofdev.Core.SOA
         {
             return new CallId
             {
-                Id = NewGuid(),
+                Id = New(),
                 Parent = Id,
                 Root = Root
             };
