@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -37,7 +38,9 @@ namespace Nofdev.Server
 
             _assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
 
-            Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
+           
+                Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
+
         }
 
         public IConfigurationRoot Configuration { get; protected set; }
@@ -100,24 +103,6 @@ namespace Nofdev.Server
             //env.ConfigureNLog("nlog.config");
 
             app.UseMvc();
-            //app.UseMvc(r =>
-            //{
-            //    r.MapRoute(
-            //           name: "facade",
-            //           template: "json/facade",
-            //           defaults: new { controller = "Facade", action = "Json" }
-            //       );
-            //    r.MapRoute(
-            //          name: "service",
-            //          template: "json/service",
-            //          defaults: new { controller = "Service", action = "Json" }
-            //      );
-            //    r.MapRoute(
-            //          name: "micro",
-            //          template: "json/micro",
-            //          defaults: new { controller = "Micro", action = "Json" }
-            //      );
-            //});
 
             appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
         }
