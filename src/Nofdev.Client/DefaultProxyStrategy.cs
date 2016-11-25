@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Nofdev.Core;
 using Nofdev.Core.SOA;
@@ -13,11 +14,15 @@ namespace Nofdev.Client
 {
     public class DefaultProxyStrategy : IProxyStrategy
     {
-        //private static readonly ILogger logger = LogHelper.LoggerManager.GetLogger(typeof (DefaultProxyStrategy));
-     
+        private readonly ILogger<DefaultProxyStrategy> _logger;
+
+        public DefaultProxyStrategy(ILogger<DefaultProxyStrategy> logger)
+        {
+            _logger = logger;
+        }
+
         public string GetRemoteUrl(Type interfaceType, MethodInfo method)
         {
-            //logger.Debug(() => $"The baseUrl is {baseURL}");
             var location = Bootstrap.GetServiceLocationByType(interfaceType);
             string serviceLayer = location.Layer;
             string interName = interfaceType.Name.RemovePrefixI();
@@ -34,7 +39,7 @@ namespace Nofdev.Client
             sb.Append("/");
             sb.Append(method.Name);
             var remoteURL = sb.ToString();
-            //logger.Debug(() => $"The remoteUrl is {remoteURL}");
+            _logger.LogDebug( $"The remoteUrl is {remoteURL}");
             return remoteURL;
         }
 
@@ -56,8 +61,7 @@ namespace Nofdev.Client
             }
 
             var result = httpMessageSimple.Body;
-            //logger.Debug(() => $"The request return {result}");
-            //logger.Debug(() => $"The method real return type is {realReturnType}");
+            _logger.LogDebug( $"The request return {result}.The method real return type is {realReturnType}");
 
             var type = typeof (HttpJsonResponse<>).MakeGenericType(realReturnType);
             dynamic httpJsonResponse = JsonConvert.DeserializeObject(result, type);

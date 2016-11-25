@@ -1,8 +1,6 @@
 {
   "dependencies": {
-    "Nofdev.Server": "1.0.0-*",
-    "Nofdev.Sample.Demo": "1.0.0-*",
-    "Microsoft.AspNetCore.Diagnostics": "1.1.0",
+    "Nofdev.Sample.RemoteAPI": "1.0.0-*",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.AspNetCore.Routing": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
@@ -15,11 +13,9 @@
     "Microsoft.Extensions.Logging.Debug": "1.1.0",
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
     "Microsoft.NETCore.App": "1.1.0",
-    "Nofdev.Sample.RemoteAPI": "1.0.0-*"
-  },
-
-  "runtimes": {
-    "win10-x64": {}
+    "Nofdev.Server": "1.0.0-*",
+    "Microsoft.AspNetCore.Diagnostics": "1.1.0",
+    "Nofdev.Sample.RemoteAPI.Impl": "1.0.0-*"
   },
 
   "tools": {
@@ -33,6 +29,10 @@
         "portable-net45+win8"
       ]
     }
+  },
+
+  "runtimes": {
+    "win10-x64": {}
   },
 
   "buildOptions": {

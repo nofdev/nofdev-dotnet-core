@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Nofdev.Sample.Server
+namespace Nofdev.Sample.RemoteService
 {
     public class Startup : Nofdev.Server.Startup
     {
         public Startup(IHostingEnvironment env) : base(env)
         {
-           
+
         }
 
         #region Overrides of Startup
@@ -34,5 +38,4 @@ namespace Nofdev.Sample.Server
         #endregion
     }
 
-   
 }

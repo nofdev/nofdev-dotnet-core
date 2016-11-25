@@ -1,31 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Nofdev.Sample.RemoteAPI;
 
-namespace Nofdev.Sample.Server.Controllers
+namespace Nofdev.Sample.RemoteService.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        private readonly ITimingFacade _timingFacade;
-
-        public ValuesController(ITimingFacade timingFacade)
-        {
-            _timingFacade = timingFacade;
-        }
-
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
-        }
-
-        [HttpGet("[action]")]
-        public DateTime GetNow()
-        {
-            return _timingFacade.GetNow();
         }
 
         // GET api/values/5

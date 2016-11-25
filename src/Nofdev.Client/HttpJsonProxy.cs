@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nofdev.Core.SOA;
 
 namespace Nofdev.Client
 {
     public class HttpJsonProxy
     {
-        //private static readonly ILogger logger = LogHelper.LoggerManager.GetLogger(typeof (HttpJsonProxy));
+        private readonly ILogger<HttpJsonProxy> _logger;
 
-        public HttpJsonProxy(IProxyStrategy strategy)
+        public HttpJsonProxy(IProxyStrategy strategy,ILogger<HttpJsonProxy> logger)
         {
+            _logger = logger;
             ProxyStrategy = strategy;
         }
 
@@ -49,7 +54,7 @@ namespace Nofdev.Client
             }
             catch (Exception e)
             {
-                //logger.Error(e,() => $"Error when proxy to {remoteUrl} interface {inter}, method {method}");
+                _logger.LogError( $"Error when proxy to {remoteUrl} interface {inter}, method {method}",e);
                 throw;
             }
         }
@@ -63,7 +68,9 @@ namespace Nofdev.Client
                 paras = new Dictionary<string, string>();
             }
 
-                var httpResponseMessage = await hc.PostAsync(remoteUrl, new FormUrlEncodedContent(paras)).ConfigureAwait(false);
+            var jsonObject = JsonConvert.SerializeObject(paras);
+            var postContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
+            var httpResponseMessage = await hc.PostAsync(remoteUrl, postContent).ConfigureAwait(false);
             var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var contentType = httpResponseMessage.Content.Headers.ContentType;
             var httpStatusCode = httpResponseMessage.StatusCode;

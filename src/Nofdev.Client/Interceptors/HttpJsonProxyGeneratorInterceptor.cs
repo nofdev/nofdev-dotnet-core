@@ -2,24 +2,23 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using Microsoft.Extensions.Logging;
 
 namespace Nofdev.Client.Interceptors
 {
     public class HttpJsonProxyGeneratorInterceptor : IInterceptor
     {
-        //private static readonly ILogger logger = LogHelper.LoggerManager.GetLogger(typeof (HttpJsonProxyGeneratorInterceptor));
         private readonly HttpJsonProxy _proxy;
+        private readonly ILogger<HttpJsonProxyGeneratorInterceptor> _logger;
 
-        public HttpJsonProxyGeneratorInterceptor(HttpJsonProxy proxy)
+        public HttpJsonProxyGeneratorInterceptor(HttpJsonProxy proxy,ILogger<HttpJsonProxyGeneratorInterceptor> logger)
         {
             _proxy = proxy;
+            _logger = logger;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            //TODO need exception handling??
-            //TODO what if { result: null, err: {...} } returned?
-
             var returnType = invocation.Method.ReturnType;
             var returnTypeInfo = returnType.GetTypeInfo();
             var realType = returnType;
@@ -27,7 +26,7 @@ namespace Nofdev.Client.Interceptors
             if (returnTypeInfo.IsGenericType && returnTypeInfo.BaseType == typeof(Task))
             {
                 realType = returnType.GenericTypeArguments[0];
-                //logger.Debug(() => $"Return type is Task<{realType}>");
+                _logger.LogDebug( $"Return type is Task<{realType}>");
                 isTask = true;
             }
             else if (returnType == typeof (void))
@@ -36,15 +35,14 @@ namespace Nofdev.Client.Interceptors
             }
             else
             {
-                //logger.Debug(() => $"Return type is Task for underlying void returning type");
+                _logger.LogDebug( "Return type is Task for underlying void returning type");
             }
-            makeRemoteCall(invocation, realType,isTask);
+            MakeRemoteCall(invocation, realType,isTask);
 
-           
         }
          
 
-        private   void makeRemoteCall(IInvocation invocation, Type realType, bool isTask)
+        private   void MakeRemoteCall(IInvocation invocation, Type realType, bool isTask)
         {
             var returnValue = _proxy.GetType()
                 .GetMethod("MakeRemoteCall")
@@ -65,26 +63,26 @@ namespace Nofdev.Client.Interceptors
                 return;
             }
 
-            //try
-            //{
+            try
+            {
                 task.Wait();
 
                 if (task.IsFaulted)
                 {
-                    return; 
+                    return;
                 }
                 var result =
                      task.GetType()
                          .GetProperty("Result")
                          .GetValue(task, null);
 
-                invocation.ReturnValue = Convert.ChangeType(result,realType);
-            //}
-            //catch (Exception e)
-            //{
-            //    //logger.Error(e,() => $"Error when proxy to interface { _proxy.GetType()}");
-            //    throw e;
-            //}
+                invocation.ReturnValue = Convert.ChangeType(result, realType);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError( $"Error when proxy to interface { _proxy.GetType()}",e);
+                throw;
+            }
         }
     }
 }

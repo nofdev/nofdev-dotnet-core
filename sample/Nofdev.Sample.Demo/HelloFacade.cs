@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Nofdev.Sample.Demo
+namespace Nofdev.Sample.API
 {
     public interface IHelloFacade
     {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Nofdev.Core.SOA;
@@ -14,6 +15,9 @@ namespace Nofdev.Client
 
         public static void Startup(string root)
         {
+            var rpcFile = Path.Combine(root, RpcConfig.FileName);
+            if (!File.Exists(rpcFile))
+                return;
             RpcConfig = ConfigManager.ReadRpcConfig(root);
         }
 

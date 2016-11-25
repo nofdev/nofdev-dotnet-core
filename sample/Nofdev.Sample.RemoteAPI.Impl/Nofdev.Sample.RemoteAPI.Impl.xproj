@@ -7,8 +7,8 @@
 
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>18004323-1d22-4ebc-bf80-aa64cccc307d</ProjectGuid>
-    <RootNamespace>Nofdev.Sample.Demo</RootNamespace>
+    <ProjectGuid>528e6208-5c65-42d5-8b51-97898295ddc5</ProjectGuid>
+    <RootNamespace>Nofdev.Sample.RemoteAPI.Impl</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">.\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">.\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>

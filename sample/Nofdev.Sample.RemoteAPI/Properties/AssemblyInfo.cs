@@ -1,14 +1,13 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Nofdev.Core.SOA.Annotations;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Nofdev.Sample.Demo")]
+[assembly: AssemblyProduct("Nofdev.Sample.RemoteAPI")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -17,4 +16,4 @@ using Nofdev.Core.SOA.Annotations;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("18004323-1d22-4ebc-bf80-aa64cccc307d")]
+[assembly: Guid("3d915d72-009c-4d23-a55f-779fb01c4348")]

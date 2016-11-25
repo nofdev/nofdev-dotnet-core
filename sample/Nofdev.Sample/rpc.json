@@ -1,8 +1,8 @@
 ﻿{
   "services": [
     {
-      "namespace": "Nofdev.Sample.Proxy",
-      "baseUrl": "http://somewherenotfound.com/",
+      "namespace": "Nofdev.Sample.RemoteAPI",
+      "baseUrl": "http://localhost:50828/",
       "protocol": "json"
     }
   ]

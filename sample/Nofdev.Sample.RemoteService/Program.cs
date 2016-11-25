@@ -1,7 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 
-namespace Nofdev.Sample.Server
+namespace Nofdev.Sample.RemoteService
 {
     public class Program
     {
