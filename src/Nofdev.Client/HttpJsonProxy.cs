@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,12 +43,7 @@ namespace Nofdev.Client
                         hc.DefaultRequestHeaders.Add(key.ToLower(), items[key]);
                     }
                     var response = await postAsync(hc, remoteUrl, paras);
-                    return (T)ProxyStrategy.GetResult(method, realReturnType, new HttpMessageSimple
-                    {
-                        Body = response.Item1,
-                        ContentType = response.Item2,
-                        StatusCode = response.Item3
-                    });
+                    return (T)ProxyStrategy.GetResult(method, realReturnType, response);
                 }
             }
             catch (Exception e)
@@ -59,7 +53,7 @@ namespace Nofdev.Client
             }
         }
 
-        private async Task<Tuple<string, string, int>> postAsync(HttpClient hc, string remoteUrl,
+        private async Task<HttpMessageSimple> postAsync(HttpClient hc, string remoteUrl,
             IDictionary<string, string> paras)
         {
 
@@ -74,7 +68,12 @@ namespace Nofdev.Client
             var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var contentType = httpResponseMessage.Content.Headers.ContentType;
             var httpStatusCode = httpResponseMessage.StatusCode;
-            return new Tuple<string, string, int>(content, contentType.MediaType, (int) httpStatusCode);
+            return new HttpMessageSimple
+            {
+                Body = content,
+                ContentType =  contentType.MediaType,
+                StatusCode = (int)httpStatusCode
+            } ;
         }
     }
 }
