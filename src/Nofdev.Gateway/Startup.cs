@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nofdev.Gateway.Data;
 using Nofdev.Gateway.Models;
-using Nofdev.Gateway.Services;
 
 namespace Nofdev.Gateway
 {
@@ -32,35 +31,54 @@ namespace Nofdev.Gateway
 
         public IConfigurationRoot Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Add framework services.
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        protected IIdentityServerBuilder IdentityServerBuilder;
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public virtual void ConfigureServices(IServiceCollection services)
+        {
+            ConfigureDbContext(services);
+
+            ConfigureIdentity(services);
 
             services.AddMvc();
 
             // Add application services.
-            services.AddTransient<IEmailSender, AuthMessageSender>();
-            services.AddTransient<ISmsSender, AuthMessageSender>();
+            //services.AddTransient<IEmailSender, AuthMessageSender>();
+            //services.AddTransient<ISmsSender, AuthMessageSender>();
 
-            
-             services.AddIdentityServer()
-                .AddTemporarySigningCredential()
-                .AddInMemoryPersistedGrants()
-                .AddInMemoryScopes(Config.GetScopes())
-                .AddInMemoryClients(Config.GetClients())
-                .AddAspNetIdentity<ApplicationUser>();
+
+            IdentityServerBuilder = services.AddIdentityServer()
+              .AddTemporarySigningCredential()
+              .AddInMemoryPersistedGrants();
+
+              ConfigureIdentityServer(IdentityServerBuilder);
+        }
+
+        protected virtual void ConfigureDbContext(IServiceCollection services)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         }
 
+        protected virtual void ConfigureIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+              .AddEntityFrameworkStores<ApplicationDbContext>()
+              .AddDefaultTokenProviders();
+        }
+
+        /// <summary>
+        /// extend your own IdentityServer logic here,such as Client,Scope,and etc.
+        /// </summary>
+        /// <param name="identityServerBuilder"></param>
+        protected virtual void ConfigureIdentityServer(IIdentityServerBuilder identityServerBuilder)
+        {
+            identityServerBuilder.AddAspNetIdentity<ApplicationUser>();
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -71,13 +89,12 @@ namespace Nofdev.Gateway
                 app.UseDatabaseErrorPage();
                 app.UseBrowserLink();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
+            //else
+            //{
+            //    app.UseExceptionHandler("/Home/Error");
+            //}
 
-            app.UseStaticFiles();
-
+            //app.UseStaticFiles();
             app.UseIdentity();
             app.UseIdentityServer();
 

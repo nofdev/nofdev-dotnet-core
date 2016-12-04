@@ -10,14 +10,12 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// </summary>
     /// <typeparam name="TUser">The type of user.</typeparam>
     public class MultitenancyIdentityDbContext<TUser>
-        :
-            MultitenancyIdentityDbContext
-                <TUser, IdentityRole<string, MultitenanyIdentityUserRole, IdentityRoleClaim<string>>, string, string,
-                    MultitenancyIdentityUserClaim, MultitenanyIdentityUserRole,
-                    MultitenancyIdentityUserLogin, IdentityRoleClaim<string>, MultitenancyIdentityUserToken>
+        : MultitenancyIdentityDbContext<TUser,MultitenancyIdentityRole,string, string,
+                    MultitenancyIdentityUserClaim, MultitenancyIdentityUserRole,
+                    MultitenancyIdentityUserLogin, MultitenancyIdentityRoleClaim, MultitenancyIdentityUserToken>
         where TUser :
             MultitenancyIdentityUser
-                <string, string, MultitenancyIdentityUserLogin, MultitenanyIdentityUserRole,
+                <string, string, MultitenancyIdentityUserLogin, MultitenancyIdentityUserRole,
                     MultitenancyIdentityUserClaim>
     {
         ///// <summary>
@@ -53,14 +51,13 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
     /// <typeparam name="TRoleClaim"></typeparam>
     /// <typeparam name="TUserToken"></typeparam>
-    public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,
-        TRoleClaim, TUserToken>
+    public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,TRoleClaim, TUserToken>
         : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
         where TUser : MultitenancyIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
-        where TRole : IdentityRole<TKey, TUserRole, TRoleClaim>
-        where TRoleClaim : IdentityRoleClaim<TKey>
+        where TRole : MultitenancyIdentityRole<TKey, TTenantKey, TUserRole, TRoleClaim>
+        where TRoleClaim : MultitenancyIdentityRoleClaim<TKey,TTenantKey>
         where TUserLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>, new()
-        where TUserRole : MultitenanyIdentityUserRole<TKey, TTenantKey>, new()
+        where TUserRole : MultitenancyIdentityUserRole<TKey, TTenantKey>,  new()
         where TUserClaim : MultitenancyIdentityUserClaim<TKey, TTenantKey>, new()
         where TUserToken : MultitenancyIdentityUserToken<TKey, TTenantKey>
         where TKey : IEquatable<TKey>

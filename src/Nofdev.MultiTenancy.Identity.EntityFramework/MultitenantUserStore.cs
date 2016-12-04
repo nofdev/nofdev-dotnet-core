@@ -16,10 +16,10 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     public class MultitenancyUserStore<TUser, TContext>
         :
             MultitenancyUserStore
-                <TUser, IdentityRole<string, MultitenanyIdentityUserRole, IdentityRoleClaim<string>>, TContext, string, string, MultitenancyIdentityUserClaim, MultitenanyIdentityUserRole,
+                <TUser, IdentityRole<string, MultitenancyIdentityUserRole, IdentityRoleClaim<string>>, TContext, string, string, MultitenancyIdentityUserClaim, MultitenancyIdentityUserRole,
                     MultitenancyIdentityUserLogin, IdentityUserToken<string>>
         where TUser : 
-        MultitenancyIdentityUser<string, string, MultitenancyIdentityUserLogin, MultitenanyIdentityUserRole, MultitenancyIdentityUserClaim>
+        MultitenancyIdentityUser<string, string, MultitenancyIdentityUserLogin, MultitenancyIdentityUserRole, MultitenancyIdentityUserClaim>
         where TContext : DbContext
     {
         public MultitenancyUserStore(TContext context, IdentityErrorDescriber describer = null)
