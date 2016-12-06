@@ -36,33 +36,42 @@ namespace Nofdev.Server
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            ScanComponents(env.ContentRootPath);
+            Assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
 
-
-                Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
-
-        }
-
-        protected virtual void ScanComponents(string root)
-        {
-            Assemblies = ComponentScan.GetAssemblies(root).ToList();
+            Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
 
         }
+
 
         public IConfigurationRoot Configuration { get; protected set; }
         public IContainer ApplicationContainer { get; protected set; }
         protected  List<Assembly> Assemblies; 
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
+        public  IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            AddServices(services);
+            FilterAssemblies();
+            return  RegisterIoC(services);
+        }
 
+        protected virtual void AddServices(IServiceCollection services)
+        {
+            
+        }
+
+        protected virtual void FilterAssemblies()
+        {
+            
+        }
+
+        protected virtual IServiceProvider RegisterIoC(IServiceCollection services)
+        {
 
             var builder = new ContainerBuilder();
             builder.RegisterType<HttpJsonProxy>();
             builder.RegisterType<HttpJsonProxyGeneratorInterceptor>();
-
 
             var registeredTypes = new List<Type>();
             DependencyBootstrapper.Scan(Assemblies, (i, t) =>
@@ -71,10 +80,10 @@ namespace Nofdev.Server
                 registeredTypes.Add(i);
             });
 
-          
-          
+
+
             var sb = new ServiceBootstrapper();
-            sb.Scan(Assemblies,registeredTypes);
+            sb.Scan(Assemblies, registeredTypes);
             sb.UnmatchedInterfaces.Values.ToList().ForEach(v =>
             {
                 v.ForEach(t =>
@@ -83,12 +92,13 @@ namespace Nofdev.Server
                         //.AsImplementedInterfaces()
                         //.InstancePerLifetimeScope()
                         .EnableInterfaceInterceptors()
-                        .InterceptedBy(typeof (HttpJsonProxyGeneratorInterceptor));
+                        .InterceptedBy(typeof(HttpJsonProxyGeneratorInterceptor));
                 });
             });
 
             builder.Populate(services);
             ApplicationContainer = builder.Build();
+
             var sp = new AutofacServiceProvider(ApplicationContainer);
             return sp;
         }
@@ -99,18 +109,30 @@ namespace Nofdev.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public  void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
 
+           ConfigureLoggerFactory(loggerFactory);
+            ConfigureHostingEnvironment(env);
+            ConfigureApplication(app,appLifetime);
+        }
+
+        protected virtual void ConfigureApplication(IApplicationBuilder app, IApplicationLifetime appLifetime)
+        {
+            app.UseMvc();
+            appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
+        }
+
+        protected virtual void ConfigureLoggerFactory(ILoggerFactory loggerFactory)
+        {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
             loggerFactory.AddNLog();
+        }
 
+        protected virtual void ConfigureHostingEnvironment(IHostingEnvironment env)
+        {
             //env.ConfigureNLog("nlog.config");
-
-            app.UseMvc();
-
-            appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
         }
     }
 }
