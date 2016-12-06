@@ -22,7 +22,7 @@ namespace Nofdev.Core.Dependency
                     a => interfaceList.AddRange(a.GetTypes().Where(t => t.GetTypeInfo().IsInterface || t.GetTypeInfo().IsAbstract)));
             assemblyList.ForEach(a =>
             {
-                var types = a.GetTypes().Where(t => t.GetTypeInfo().IsClass).ToList();
+                var types = a.GetTypes().Where(t => t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract).ToList();
                 types.ForEach(t =>
                 {
                     var interfaces = t.GetInterfaces().ToList();

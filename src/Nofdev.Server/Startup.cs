@@ -36,16 +36,22 @@ namespace Nofdev.Server
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            _assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
+            ScanComponents(env.ContentRootPath);
 
-           
+
                 Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
+
+        }
+
+        protected virtual void ScanComponents(string root)
+        {
+            Assemblies = ComponentScan.GetAssemblies(root).ToList();
 
         }
 
         public IConfigurationRoot Configuration { get; protected set; }
         public IContainer ApplicationContainer { get; protected set; }
-        private readonly List<Assembly> _assemblies; 
+        protected  List<Assembly> Assemblies; 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual IServiceProvider ConfigureServices(IServiceCollection services)
@@ -59,7 +65,7 @@ namespace Nofdev.Server
 
 
             var registeredTypes = new List<Type>();
-            DependencyBootstrapper.Scan(_assemblies, (i, t) =>
+            DependencyBootstrapper.Scan(Assemblies, (i, t) =>
             {
                 builder.RegisterType(t).As(i);
                 registeredTypes.Add(i);
@@ -68,7 +74,7 @@ namespace Nofdev.Server
           
           
             var sb = new ServiceBootstrapper();
-            sb.Scan(_assemblies,registeredTypes);
+            sb.Scan(Assemblies,registeredTypes);
             sb.UnmatchedInterfaces.Values.ToList().ForEach(v =>
             {
                 v.ForEach(t =>
