@@ -42,7 +42,8 @@
     "IdentityServer4": "1.0.0-rc3",
     "IdentityServer4.AspNetIdentity": "1.0.0-rc3",
     "Nofdev.MultiTenancy.Identity.EntityFramework": "1.0.0-*",
-    "Nofdev.Core": "1.0.0-*"
+    "Nofdev.Core": "1.0.0-*",
+    "Nofdev.Server": "1.0.0-*"
   },
 
   "tools": {

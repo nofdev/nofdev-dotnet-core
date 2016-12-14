@@ -10,31 +10,26 @@ using Nofdev.Gateway.Models;
 
 namespace Nofdev.Gateway
 {
-    public class Startup
+    public class Startup : Server.Startup
     {
         public Startup(IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            var builder = CreateConfigurationBuilder(env);
+            builder.AddJsonFile("rpc.json");
 
             if (env.IsDevelopment())
             {
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
             }
-
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
         }
 
-        public IConfigurationRoot Configuration { get; }
 
         protected IIdentityServerBuilder IdentityServerBuilder;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public virtual void ConfigureServices(IServiceCollection services)
+
+        protected override void AddServices(IServiceCollection services)
         {
             ConfigureDbContext(services);
 
@@ -51,8 +46,9 @@ namespace Nofdev.Gateway
               .AddTemporarySigningCredential()
               .AddInMemoryPersistedGrants();
 
-              ConfigureIdentityServer(IdentityServerBuilder);
+            ConfigureIdentityServer(IdentityServerBuilder);
         }
+
 
         protected virtual void ConfigureDbContext(IServiceCollection services)
         {
@@ -78,10 +74,10 @@ namespace Nofdev.Gateway
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public virtual void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public override void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+
+            base.Configure(app, env, loggerFactory, appLifetime);
 
             if (env.IsDevelopment())
             {

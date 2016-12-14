@@ -30,11 +30,6 @@ namespace Nofdev.Sample.RemoteService
 
         }
 
-        public override IServiceProvider ConfigureServices(IServiceCollection services)
-        {
-            return base.ConfigureServices(services);
-        }
-
         #endregion
     }
 

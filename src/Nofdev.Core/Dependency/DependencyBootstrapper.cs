@@ -25,7 +25,10 @@ namespace Nofdev.Core.Dependency
                 var types = a.GetTypes().Where(t => t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract).ToList();
                 types.ForEach(t =>
                 {
-                    var interfaces = t.GetInterfaces().ToList();
+                    var allInterfaces = t.GetInterfaces().ToList();
+                    var interfaces = allInterfaces.Where(x => !allInterfaces.Any(y => y.GetInterfaces().Contains(x))).ToList();
+                    if (interfaces.Any())
+                        interfaces = ExcludeBaseInterfaces(t, interfaces).ToList();
                     interfaces.ForEach(i =>
                     {
                         foreach (var type in interfaceList.Where(m => m == i))
@@ -39,6 +42,17 @@ namespace Nofdev.Core.Dependency
             });
 
             return interfaceList;
+        }
+
+        private static IEnumerable<Type> ExcludeBaseInterfaces(Type t, IEnumerable<Type> interfaces)
+        {
+            var baseType = t.GetTypeInfo().BaseType;
+            if (baseType != null)
+            {
+                interfaces = interfaces.Except(baseType.GetInterfaces()).ToList();
+                return ExcludeBaseInterfaces(baseType, interfaces);
+            }
+            return interfaces;
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using Nofdev.Core.SOA.Annotations;
 using Nofdev.Core.Util;
 
@@ -10,10 +9,6 @@ namespace Nofdev.Core.SOA
 {
     public class ServiceBootstrapper
     {
-
-        public ServiceBootstrapper()
-        {
-        }
 
         //private static ServiceBootstrapper _instance;
         //public static ServiceBootstrapper Instance => _instance ?? (_instance = new ServiceBootstrapper());
@@ -38,7 +33,6 @@ namespace Nofdev.Core.SOA
                 });
                 Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade), iocTypes);
                 Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service), iocTypes);
-                Add(Scan<MicroServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Micro), iocTypes);
             }
         }
 
@@ -94,5 +88,25 @@ namespace Nofdev.Core.SOA
             return
                types.Where(t => t.GetTypeInfo().IsInterface && t.GetTypeInfo().GetCustomAttribute<T>() != null);
         }
+
+        public static Type GetServiceType(string packageName, string interfaceName, string serviceLayer)
+        {
+            var key =
+                $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}"
+                    .ToLower();
+
+
+            if (!UrlTypes.ContainsKey(key))
+                key =
+                    $"{serviceLayer}.{packageName.Replace('-', '.')}.{interfaceName}{serviceLayer}"
+                        .ToLower();
+
+            if (!UrlTypes.ContainsKey(key))
+            {
+                throw new InvalidOperationException($"Can not find interface {packageName}.{interfaceName} in {serviceLayer} layer.");
+            }
+            return UrlTypes[key];
+        }
+
     }
 }

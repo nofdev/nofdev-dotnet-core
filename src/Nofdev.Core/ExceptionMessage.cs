@@ -1,4 +1,6 @@
-﻿namespace Nofdev.Core
+﻿using System;
+
+namespace Nofdev.Core
 {
     /// <summary>
     /// ExceptionMessage
@@ -23,5 +25,22 @@
         /// stack trace
         /// </summary>
         public string Stack { get; set; }
+
+
+        public static  ExceptionMessage FromException(Exception exception,bool enableStackTrace)
+        {
+            if (exception == null) return null;
+            var exceptionMessage = new ExceptionMessage
+            {
+                Name = exception.GetType().Name,
+                Msg = exception.Message,
+                Cause = FromException(exception.InnerException, enableStackTrace)
+            };
+            if (enableStackTrace)
+            {
+                exceptionMessage.Stack = exception.StackTrace;
+            }
+            return exceptionMessage;
+        }
     }
 }

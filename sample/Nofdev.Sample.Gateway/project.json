@@ -1,27 +1,13 @@
 {
   "dependencies": {
-    "Nofdev.Core": "1.0.0-*",
-    "Nofdev.Logging.NLog": "1.0.0-*",
-    "Autofac.Extensions.DependencyInjection": "4.0.0",
-    "Castle.Core": "4.0.0-beta002",
-    "Nofdev.Client": "1.0.0-*",
-    "Microsoft.AspNetCore.Mvc": "1.1.0",
-    "Microsoft.AspNetCore.Routing": "1.1.0",
+    "Microsoft.AspNetCore.Diagnostics": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.1.0",
-    "Microsoft.Extensions.Configuration.EnvironmentVariables": "1.1.0",
-    "Microsoft.Extensions.Configuration.FileExtensions": "1.1.0",
-    "Microsoft.Extensions.Configuration.Json": "1.1.0",
-    "Microsoft.Extensions.Logging": "1.1.0",
+    "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0",
+    "Microsoft.Extensions.Configuration.Abstractions": "1.2.0-preview1-22821",
     "Microsoft.Extensions.Logging.Console": "1.1.0",
-    "Microsoft.Extensions.Logging.Debug": "1.1.0",
-    "Microsoft.Extensions.Options.ConfigurationExtensions": "1.1.0",
-    "Microsoft.NETCore.App": "1.1"
-  },
-
-  "runtimes": {
-    "win10-x64": {},
-    "win7-x64": {}
+    "Microsoft.NETCore.App": "1.1.0",
+    "Nofdev.Gateway": "1.0.0-*"
   },
 
   "tools": {
@@ -35,6 +21,12 @@
         "portable-net45+win8"
       ]
     }
+  },
+
+
+  "runtimes": {
+    "win10-x64": {},
+    "win7-x64": {}
   },
 
   "buildOptions": {
@@ -51,8 +43,6 @@
   "publishOptions": {
     "include": [
       "wwwroot",
-      "**/*.cshtml",
-      "appsettings.json",
       "web.config"
     ]
   },

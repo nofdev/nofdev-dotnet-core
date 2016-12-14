@@ -42,7 +42,7 @@ namespace Nofdev.Client
                     {
                         hc.DefaultRequestHeaders.Add(key.ToLower(), items[key]);
                     }
-                    var response = await postAsync(hc, remoteUrl, paras);
+                    var response = await postAsync(hc, remoteUrl, paras).ConfigureAwait(false);
                     return (T)ProxyStrategy.GetResult(method, realReturnType, response);
                 }
             }

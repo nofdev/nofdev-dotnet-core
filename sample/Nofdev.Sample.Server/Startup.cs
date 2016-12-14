@@ -25,12 +25,6 @@ namespace Nofdev.Sample.Server
             base.Configure(app, env, loggerFactory, appLifetime);
 
         }
-
-        public override IServiceProvider ConfigureServices(IServiceCollection services)
-        {
-            return base.ConfigureServices(services);
-        }
-
         #endregion
     }
 

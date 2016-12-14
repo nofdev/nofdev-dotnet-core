@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nofdev.Sample.API
 {
@@ -8,6 +9,15 @@ namespace Nofdev.Sample.API
         DateTime GetNow();
 
         Task<string> AddTask(TaskDTO dto);
+
+        string Say(MessageDTO dto);
+    }
+
+    public class MessageDTO
+    {
+        [Required]
+        [StringLength(10)]
+        public string Message { get; set; }
     }
 
     public class HelloFacade : IHelloFacade
@@ -25,6 +35,10 @@ namespace Nofdev.Sample.API
             return dto.OrderNumber;
         }
 
+        public string Say(MessageDTO dto)
+        {
+            return "Hello," + dto.Message;
+        }
 
         #endregion
     }

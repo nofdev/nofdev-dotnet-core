@@ -11,8 +11,7 @@ namespace Nofdev.Client
     public class Bootstrap
     {
         public static RpcConfig RpcConfig { get; set; }
-        protected static bool AutoLoadToIoC = false;
-
+       
         public static void Startup(string root)
         {
             var rpcFile = Path.Combine(root, RpcConfig.FileName);
@@ -62,8 +61,6 @@ namespace Nofdev.Client
                     return (ServiceType)Enum.Parse(typeof (ServiceType), m);
                 }
             }
-           if(type.GetTypeInfo().GetCustomAttributes<MicroServiceAttribute>().Any())
-                return ServiceType.Micro;
             if (type.GetTypeInfo().GetCustomAttributes<DomainServiceAttribute>().Any())
                 return ServiceType.Service;
            return ServiceType.Facade;

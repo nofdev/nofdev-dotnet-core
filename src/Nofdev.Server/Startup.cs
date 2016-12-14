@@ -27,19 +27,30 @@ namespace Nofdev.Server
      */
     public class Startup
     {
+        protected Startup()
+        {
+            
+        }
+
         public Startup(IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+            var builder = CreateConfigurationBuilder(env);
             Configuration = builder.Build();
 
             Assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
 
             Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
 
+        }
+
+        protected  IConfigurationBuilder CreateConfigurationBuilder(IHostingEnvironment env)
+        {
+           var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            return builder;
         }
 
 
@@ -109,30 +120,16 @@ namespace Nofdev.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public  void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public virtual  void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
 
-           ConfigureLoggerFactory(loggerFactory);
-            ConfigureHostingEnvironment(env);
-            ConfigureApplication(app,appLifetime);
-        }
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+            loggerFactory.AddNLog();
 
-        protected virtual void ConfigureApplication(IApplicationBuilder app, IApplicationLifetime appLifetime)
-        {
             app.UseMvc();
             appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
         }
 
-        protected virtual void ConfigureLoggerFactory(ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            loggerFactory.AddNLog();
-        }
-
-        protected virtual void ConfigureHostingEnvironment(IHostingEnvironment env)
-        {
-            //env.ConfigureNLog("nlog.config");
-        }
     }
 }
