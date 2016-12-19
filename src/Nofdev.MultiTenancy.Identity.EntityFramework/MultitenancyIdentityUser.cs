@@ -25,12 +25,8 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
         /// </summary>
         /// <param name="userName">The <see cref="IdentityUser{TKey, TLogin, TRole, TClaim}.UserName"/> of the user.</param>
         public MultitenancyIdentityUser(string userName)
-            : this()
+            : base(userName)
         {
-            if (string.IsNullOrWhiteSpace(userName))
-                throw new ArgumentNullException("userName");
-
-            UserName = userName;
         }
     }
 
@@ -43,15 +39,42 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TRole">The type of user role.</typeparam>
     /// <typeparam name="TClaim">The type of user claim.</typeparam>
     public class MultitenancyIdentityUser<TKey, TTenantKey, TLogin, TRole, TClaim>
-        : IdentityUser<TKey, TClaim, TRole, TLogin>, ITenant<TTenantKey>
+        : IdentityUser<TKey, TClaim, TRole, TLogin>, ITenant<TTenantKey>,
+        IMutableModel<TKey,TKey> 
         where TLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>
         where TRole : IdentityUserRole<TKey>
         where TClaim : IdentityUserClaim<TKey>
         where TKey : IEquatable<TKey>
     {
+        public MultitenancyIdentityUser()
+        {
+        }
+
+        public MultitenancyIdentityUser(string userName) : base(userName)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentNullException(nameof(userName));
+        }
+
         /// <summary>
         /// Gets or sets the unique identifier of the tenant.
         /// </summary>
         public TTenantKey TenantId { get; set; }
+
+        public string TrueName { get; set; }
+
+        #region Implementation of IImmutableModel<TKey>
+
+        public DateTime CreatedDate { get; set; }
+        public TKey CreatedBy { get; set; }
+
+        #endregion
+
+        #region Implementation of IMutableModel<TKey>
+
+        public TKey UpdatedBy { get; set; }
+        public DateTime? UpdatedDate { get; set; }
+
+        #endregion
     }
 }
