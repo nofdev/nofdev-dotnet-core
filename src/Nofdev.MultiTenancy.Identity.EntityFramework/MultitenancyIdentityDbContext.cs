@@ -17,6 +17,7 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
             MultitenancyUserPermission<string, TUser, string, string>,
             MultitenancyOrganizationUnit<string, TUser, string>,
             MultitenancyUserOrganization<string, TUser,MultitenancyOrganizationUnit<string, TUser, string>, string>,
+             MultitenancyUserDataPermission<string, TUser, string>,
  MultitenancyAuditLog<string, TUser, string>>
         where TUser :
             MultitenancyIdentityUser
@@ -58,7 +59,7 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserToken"></typeparam>
     public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,
         TRoleClaim, TUserToken,
-        TPermission, TRolePermission, TUserPermission, TOrg, TUserOrg, TLog>
+        TPermission, TRolePermission, TUserPermission, TOrg, TUserOrg,TDataPermission, TLog>
         : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
         where TUser : MultitenancyIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
         where TRole : MultitenancyIdentityRole<TKey, TTenantKey, TUserRole, TRoleClaim>
@@ -69,6 +70,7 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
         where TUserToken : MultitenancyIdentityUserToken<TKey, TTenantKey>
         where TRolePermission : MultitenancyRolePermission<TKey, TRole, TPermission, TTenantKey, TUser>
         where TUserPermission : MultitenancyUserPermission<TKey, TUser, TPermission, TTenantKey>
+        where TDataPermission : MultitenancyUserDataPermission<TKey,TUser,TTenantKey>
         where TOrg : MultitenancyOrganizationUnit<TKey, TUser, TTenantKey>
         where TUserOrg : MultitenancyUserOrganization<TKey,TUser,TOrg,TTenantKey>
         where TLog : MultitenancyAuditLog<TKey, TUser, TTenantKey>
@@ -76,6 +78,7 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     {
         public DbSet<TRolePermission> RolePermissions { get; set; }
         public DbSet<TUserPermission> UserPermissions { get; set; }
+        public DbSet<TDataPermission> UserDataPermissions { get; set; } 
         public DbSet<TOrg> OrganizationUnits { get; set; }
         public DbSet<TUserOrg> UserOrganizations { get; set; }
         public DbSet<TLog> AuditLogs { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
@@ -12,5 +11,4 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     {
         public TTenant TenantId { get; set; }
     }
-
 }
