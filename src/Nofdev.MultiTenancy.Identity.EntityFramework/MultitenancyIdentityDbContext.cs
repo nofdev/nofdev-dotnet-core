@@ -55,8 +55,15 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserLogin">The type of user login.</typeparam>
     /// <typeparam name="TUserRole">The type of user role.</typeparam>
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
-    /// <typeparam name="TRoleClaim"></typeparam>
-    /// <typeparam name="TUserToken"></typeparam>
+    /// <typeparam name="TRoleClaim">The type of role claim.</typeparam>
+    /// <typeparam name="TUserToken">The type of user token.</typeparam>
+    /// <typeparam name="TPermission">The type of permission key.</typeparam>
+    /// <typeparam name="TRolePermission">The type of role permission.</typeparam>
+    /// <typeparam name="TUserPermission">The type of user permission.</typeparam>
+    /// <typeparam name="TOrg">The type of organization unit.</typeparam>
+    /// <typeparam name="TUserOrg">The type of user organization relationship.</typeparam>
+    /// <typeparam name="TDataPermission">The type of user data permission.</typeparam>
+    /// <typeparam name="TLog">The type of audit log.</typeparam>
     public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,
         TRoleClaim, TUserToken,
         TPermission, TRolePermission, TUserPermission, TOrg, TUserOrg,TDataPermission, TLog>
