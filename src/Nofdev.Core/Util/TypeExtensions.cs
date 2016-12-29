@@ -24,7 +24,7 @@ namespace Nofdev.Core.Util
             {
                 realType = returnType.GenericTypeArguments[0];
             }
-            else if (returnTypeInfo.IsGenericType && returnTypeInfo.BaseType == typeof(IEnumerable))
+            else if (returnType.Name == typeof(IEnumerable<>).Name)
             {
                 realType = typeof(List<>).MakeGenericType(returnType.GenericTypeArguments[0]);
             }
