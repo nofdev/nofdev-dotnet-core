@@ -26,6 +26,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Gateway", "Nofdev.Ga
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Data.Validation", "Nofdev.Data.Validation\Nofdev.Data.Validation.xproj", "{89D70001-8B62-491E-ADB8-3E72760223A4}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Messaging.RabbitMQ", "Nofdev.Messaging.RabbitMQ\Nofdev.Messaging.RabbitMQ.xproj", "{EE862347-E3E0-4839-8F11-64FC129121B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{89D70001-8B62-491E-ADB8-3E72760223A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89D70001-8B62-491E-ADB8-3E72760223A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89D70001-8B62-491E-ADB8-3E72760223A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE862347-E3E0-4839-8F11-64FC129121B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE862347-E3E0-4839-8F11-64FC129121B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE862347-E3E0-4839-8F11-64FC129121B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE862347-E3E0-4839-8F11-64FC129121B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,5 +83,6 @@ Global
 		{EA20879E-819C-45AC-96E4-A1525E5A7EF7} = {482661E1-E998-4884-8119-25C9FCE2B427}
 		{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D} = {482661E1-E998-4884-8119-25C9FCE2B427}
 		{89D70001-8B62-491E-ADB8-3E72760223A4} = {482661E1-E998-4884-8119-25C9FCE2B427}
+		{EE862347-E3E0-4839-8F11-64FC129121B9} = {482661E1-E998-4884-8119-25C9FCE2B427}
 	EndGlobalSection
 EndGlobal
