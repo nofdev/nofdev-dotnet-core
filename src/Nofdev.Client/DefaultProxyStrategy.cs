@@ -32,7 +32,6 @@ namespace Nofdev.Client
             sb.Append(serviceLayer);
             sb.AppendFormat("/{0}/",location.Protocol);
             var moduleName = interfaceType.Namespace;
-            moduleName = moduleName.Replace('.', '-');
             sb.Append(moduleName);
             sb.Append("/");
             sb.Append(interName);
