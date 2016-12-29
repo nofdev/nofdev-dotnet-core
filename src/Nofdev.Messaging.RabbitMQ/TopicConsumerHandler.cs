@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +12,9 @@ namespace Nofdev.Messaging
 {
     public class TopicConsumerHandler
     {
+        private readonly ILogger<TopicConsumerHandler> _logger;
 
         private readonly TopicConsumerConfig _topicConsumerConfig;
-        private readonly ILogger<TopicConsumerHandler> _logger;
 
 
         public TopicConsumerHandler(TopicConsumerConfig topicConsumerConfig, ILogger<TopicConsumerHandler> logger)
@@ -43,59 +42,36 @@ namespace Nofdev.Messaging
             var channel = connection.CreateModel();
 
             var exchange = "topic";
-                    var rk = pInterfacePath.Replace(".", "-") + "-" + method.Name;
-                
-                    channel.ExchangeDeclare(exchange, ExchangeType.Topic);
+            var rk = pInterfacePath.Replace(".", "-") + "-" + method.Name;
 
-                    var ok = channel.QueueDeclare();
+            channel.ExchangeDeclare(exchange, ExchangeType.Topic);
 
-                    channel.QueueBind(ok.QueueName, exchange, rk);
+            var ok = channel.QueueDeclare();
 
-                    var consumer = new EventingBasicConsumer(channel);
+            channel.QueueBind(ok.QueueName, exchange, rk);
 
-                    consumer.Received += (model, ea) =>
-                    {
-                        var body = ea.Body;
-                        var message = Encoding.UTF8.GetString(body);
+            var consumer = new EventingBasicConsumer(channel);
 
-                        _logger.LogDebug($"message received:{message}");
+            consumer.Received += (model, ea) =>
+            {
+                var body = ea.Body;
+                var message = Encoding.UTF8.GetString(body);
 
-                        var topic = GetResult(method, message);
+                _logger.LogDebug($"message received:{message}");
 
-                        method.Invoke(obj, topic?.Payload);
+                var topic = GetResult(message);
 
-                        //channel.BasicAck(ea.DeliveryTag, false);
-                    };
-                    channel.BasicConsume(ok.QueueName, false, consumer);
-              
-           
+                method.Invoke(obj, topic?.Payload);
+
+                //channel.BasicAck(ea.DeliveryTag, false);
+            };
+            channel.BasicConsume(ok.QueueName, false, consumer);
         }
 
 
-        private  TopicMessage<object[]> GetResult(MethodInfo method, string result)
+        protected virtual TopicMessage<object[]> GetResult(string message)
         {
-            _logger.LogDebug("The request return " + result);
-            var realType = method.GetRealReturnType();
-            _logger.LogDebug($"The method return type is {realType}");
-            return JsonConvert.DeserializeObject<TopicMessage<object[]>>(result);
-        }
-    }
-
-    public static class TypeUtil
-    {
-        public static Type GetRealReturnType(this MethodInfo method)
-        {
-            var returnType = method.ReturnType;
-            var realType = returnType;
-            if (returnType.GetTypeInfo().IsGenericType && returnType.GetTypeInfo().BaseType == typeof (Task))
-            {
-                realType = returnType.GenericTypeArguments[0];
-            }
-            else if (returnType == typeof (void))
-            {
-                realType = typeof (object);
-            }
-            return realType;
+            return JsonConvert.DeserializeObject<TopicMessage<object[]>>(message);
         }
     }
 }
