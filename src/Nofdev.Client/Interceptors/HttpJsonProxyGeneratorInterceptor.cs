@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
+using Nofdev.Core.Util;
 
 namespace Nofdev.Client.Interceptors
 {
@@ -21,22 +22,11 @@ namespace Nofdev.Client.Interceptors
         {
             var returnType = invocation.Method.ReturnType;
             var returnTypeInfo = returnType.GetTypeInfo();
-            var realType = returnType;
-            var isTask = false;
-            if (returnTypeInfo.IsGenericType && returnTypeInfo.BaseType == typeof(Task))
-            {
-                realType = returnType.GenericTypeArguments[0];
-                _logger.LogDebug( $"Return type is Task<{realType}>");
-                isTask = true;
-            }
-            else if (returnType == typeof (void))
-            {
-                realType = typeof(object);
-            }
-            else
-            {
-                _logger.LogDebug( "Return type is Task for underlying void returning type");
-            }
+            var realType = invocation.Method.GetRealReturnType();
+            var isTask = returnTypeInfo.IsGenericType && returnTypeInfo.BaseType == typeof(Task);
+
+            _logger.LogDebug( $"Return type is Task<{realType}>");
+           
             MakeRemoteCall(invocation, realType,isTask);
 
         }
