@@ -42,7 +42,7 @@ namespace Nofdev.Core.Domain
 
     public abstract class ImmutableModel<T,TUser> : IImmutableModel<T,TUser>
     {
-        public T Id { get; set; }
+        public virtual T Id { get; set; }
         public DateTime CreatedDate { get; set; }
         public TUser CreatedBy { get; set; }
     }

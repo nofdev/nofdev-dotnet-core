@@ -1,8 +1,14 @@
-﻿using Nofdev.Core.Domain;
+﻿using System;
+using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class MultitenancyUserOrganization<T, TUser, TOrg,TTenant> : UserOrganization<T, TUser,TOrg>, ITenant<TTenant>
+    public class MultitenancyUserOrganization : MultitenancyUserOrganization<int, string, string, string>
+    {
+        
+    }
+
+    public class MultitenancyUserOrganization<T, TUserKey, TOrgKey,TTenant> : UserOrganization<T, TUserKey,TOrgKey>, ITenant<TTenant>
     {
         #region Implementation of ITenant<TTenant>
 

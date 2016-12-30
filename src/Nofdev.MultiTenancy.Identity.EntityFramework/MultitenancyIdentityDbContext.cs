@@ -10,19 +10,16 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// </summary>
     /// <typeparam name="TUser">The type of user.</typeparam>
     public class MultitenancyIdentityDbContext<TUser>
-        : MultitenancyIdentityDbContext<TUser, MultitenancyIdentityRole, string, string,
-            MultitenancyIdentityUserClaim, MultitenancyIdentityUserRole,
-            MultitenancyIdentityUserLogin, MultitenancyIdentityRoleClaim, MultitenancyIdentityUserToken,
-            string, MultitenancyRolePermission<string, MultitenancyIdentityRole, string, string, TUser>,
-            MultitenancyUserPermission<string, TUser, string, string>,
-            MultitenancyOrganizationUnit<string, TUser, string>,
-            MultitenancyUserOrganization<string, TUser,MultitenancyOrganizationUnit<string, TUser, string>, string>,
-             MultitenancyUserDataPermission<string, TUser, string>,
- MultitenancyAuditLog<string, TUser, string>>
+        : MultitenancyIdentityDbContext<TUser, MultitenancyRole, MultitenancyOrganizationUnit, string, string,
+            MultitenancyUserClaim, MultitenancyUserRole,
+            MultitenancyUserLogin, MultitenancyUserToken,
+            MultitenancyUserPermission,
+            MultitenancyUserOrganization,
+             MultitenancyUserDataPermission,
+              MultitenancyRoleClaim, MultitenancyRolePermission,
+ MultitenancyAuditLog>
         where TUser :
-            MultitenancyIdentityUser
-                <string, string, MultitenancyIdentityUserLogin, MultitenancyIdentityUserRole,
-                    MultitenancyIdentityUserClaim>
+            MultitenancyUser
     {
         ///// <summary>
         ///// Applies custom model definitions for multi-tenancy.
@@ -57,35 +54,33 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
     /// <typeparam name="TRoleClaim">The type of role claim.</typeparam>
     /// <typeparam name="TUserToken">The type of user token.</typeparam>
-    /// <typeparam name="TPermission">The type of permission key.</typeparam>
     /// <typeparam name="TRolePermission">The type of role permission.</typeparam>
     /// <typeparam name="TUserPermission">The type of user permission.</typeparam>
     /// <typeparam name="TOrg">The type of organization unit.</typeparam>
     /// <typeparam name="TUserOrg">The type of user organization relationship.</typeparam>
-    /// <typeparam name="TDataPermission">The type of user data permission.</typeparam>
+    /// <typeparam name="TUserDataPermission">The type of user data permission.</typeparam>
     /// <typeparam name="TLog">The type of audit log.</typeparam>
-    public class MultitenancyIdentityDbContext<TUser, TRole, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,
-        TRoleClaim, TUserToken,
-        TPermission, TRolePermission, TUserPermission, TOrg, TUserOrg,TDataPermission, TLog>
+    public class MultitenancyIdentityDbContext<TUser, TRole, TOrg, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin,
+        TUserToken, TUserPermission, TUserOrg,TUserDataPermission, TRoleClaim, TRolePermission, TLog>
         : IdentityDbContext<TUser, TRole, TKey, TUserClaim, TUserRole, TUserLogin, TRoleClaim, TUserToken>
-        where TUser : MultitenancyIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
-        where TRole : MultitenancyIdentityRole<TKey, TTenantKey, TUserRole, TRoleClaim>
-        where TRoleClaim : MultitenancyIdentityRoleClaim<TKey, TTenantKey>
-        where TUserLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>, new()
-        where TUserRole : MultitenancyIdentityUserRole<TKey, TTenantKey>, new()
-        where TUserClaim : MultitenancyIdentityUserClaim<TKey, TTenantKey>, new()
-        where TUserToken : MultitenancyIdentityUserToken<TKey, TTenantKey>
-        where TRolePermission : MultitenancyRolePermission<TKey, TRole, TPermission, TTenantKey, TUser>
-        where TUserPermission : MultitenancyUserPermission<TKey, TUser, TPermission, TTenantKey>
-        where TDataPermission : MultitenancyUserDataPermission<TKey,TUser,TTenantKey>
-        where TOrg : MultitenancyOrganizationUnit<TKey, TUser, TTenantKey>
-        where TUserOrg : MultitenancyUserOrganization<TKey,TUser,TOrg,TTenantKey>
-        where TLog : MultitenancyAuditLog<TKey, TUser, TTenantKey>
+        where TUser : MultitenancyUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
+        where TRole : MultitenancyRole<TKey, TTenantKey, TUserRole, TRoleClaim>
+        where TRoleClaim : MultitenancyRoleClaim<TKey, TTenantKey>
+        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>, new()
+        where TUserRole : MultitenancyUserRole<TKey, TTenantKey>, new()
+        where TUserClaim : MultitenancyUserClaim<TKey, TTenantKey>, new()
+        where TUserToken : MultitenancyUserToken<TKey, TTenantKey>
+        where TRolePermission : MultitenancyRolePermission<int, TKey, TKey, TTenantKey, TKey>
+        where TUserPermission : MultitenancyUserPermission<int, TKey, TKey, TTenantKey>
+        where TUserDataPermission : MultitenancyUserDataPermission<int, TKey, TTenantKey>
+        where TOrg : MultitenancyOrganizationUnit<TKey, TKey, TTenantKey>
+        where TUserOrg : MultitenancyUserOrganization<int, TKey, TKey, TTenantKey>
+        where TLog : MultitenancyAuditLog<TKey, TKey, TTenantKey>
         where TKey : IEquatable<TKey>
     {
         public DbSet<TRolePermission> RolePermissions { get; set; }
         public DbSet<TUserPermission> UserPermissions { get; set; }
-        public DbSet<TDataPermission> UserDataPermissions { get; set; } 
+        public DbSet<TUserDataPermission> UserDataPermissions { get; set; } 
         public DbSet<TOrg> OrganizationUnits { get; set; }
         public DbSet<TUserOrg> UserOrganizations { get; set; }
         public DbSet<TLog> AuditLogs { get; set; }

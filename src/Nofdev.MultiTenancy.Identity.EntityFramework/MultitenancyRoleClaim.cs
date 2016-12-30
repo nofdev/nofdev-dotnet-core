@@ -4,12 +4,12 @@ using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class MultitenancyIdentityRoleClaim : MultitenancyIdentityRoleClaim<string,string>
+    public class MultitenancyRoleClaim : MultitenancyRoleClaim<string,string>
     {
         
     }
 
-    public class MultitenancyIdentityRoleClaim<TKey, TTenantKey> : IdentityRoleClaim<TKey>, ITenant<TTenantKey> where TKey : IEquatable<TKey>
+    public class MultitenancyRoleClaim<TKey, TTenantKey> : IdentityRoleClaim<TKey>, ITenant<TTenantKey> where TKey : IEquatable<TKey>
     {
         public TTenantKey TenantId { get; set; }
     }

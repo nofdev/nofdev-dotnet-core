@@ -6,12 +6,12 @@ using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class UserDataPermission<TKey, TUser> : IMutableModel<TKey, TUser>
+    public class UserDataPermission<TKey, TUserKey> : IMutableModel<TKey, TUserKey>
     {
-        public TKey Id { get; set; }
+        public virtual TKey Id { get; set; }
 
 
-        public TUser UserId { get; set; }
+        public TUserKey UserId { get; set; }
 
         /// <summary>
         ///     key
@@ -27,13 +27,13 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
         #region Implementation of IImmutableModel<TKey,TUser>
 
         public DateTime CreatedDate { get; set; }
-        public TUser CreatedBy { get; set; }
+        public TUserKey CreatedBy { get; set; }
 
         #endregion
 
         #region Implementation of IMutableModel<TKey,TUser>
 
-        public TUser UpdatedBy { get; set; }
+        public TUserKey UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
 
         #endregion

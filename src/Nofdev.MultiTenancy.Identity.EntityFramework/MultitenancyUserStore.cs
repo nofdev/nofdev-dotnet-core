@@ -16,10 +16,10 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     public class MultitenancyUserStore<TUser, TContext>
         :
             MultitenancyUserStore
-                <TUser, IdentityRole<string, MultitenancyIdentityUserRole, IdentityRoleClaim<string>>, TContext, string, string, MultitenancyIdentityUserClaim, MultitenancyIdentityUserRole,
-                    MultitenancyIdentityUserLogin, IdentityUserToken<string>>
+                <TUser, IdentityRole<string, MultitenancyUserRole, IdentityRoleClaim<string>>, TContext, string, string, MultitenancyUserClaim, MultitenancyUserRole,
+                    MultitenancyUserLogin, IdentityUserToken<string>>
         where TUser : 
-        MultitenancyIdentityUser<string, string, MultitenancyIdentityUserLogin, MultitenancyIdentityUserRole, MultitenancyIdentityUserClaim>
+        MultitenancyUser<string, string, MultitenancyUserLogin, MultitenancyUserRole, MultitenancyUserClaim>
         where TContext : DbContext
     {
         public MultitenancyUserStore(TContext context, IdentityErrorDescriber describer = null)
@@ -42,11 +42,11 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserToken"></typeparam>
     public class MultitenancyUserStore<TUser, TRole, TContext, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
         : UserStore<TUser, TRole, TContext, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>,ITenant<TTenantKey> 
-        where TUser : MultitenancyIdentityUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
+        where TUser : MultitenancyUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
         where TRole : IdentityRole<TKey, TUserRole, IdentityRoleClaim<TKey>>
         where TKey : IEquatable<TKey>
         where TTenantKey : IEquatable<TTenantKey>
-        where TUserLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>, new()
+        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>, new()
         where TUserRole : IdentityUserRole<TKey>, new()
         where TUserClaim : IdentityUserClaim<TKey>, new()
         where TContext : DbContext

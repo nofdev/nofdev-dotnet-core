@@ -3,12 +3,12 @@ using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class MultitenancyOrganizationUnit : MultitenancyOrganizationUnit<int, string, string>
+    public class MultitenancyOrganizationUnit : MultitenancyOrganizationUnit<string, string, string>
     {
         
     }
 
-    public class MultitenancyOrganizationUnit<T,TUser, TTenant> : OrganizationUnit<T, TUser>,ITenant<TTenant>
+    public class MultitenancyOrganizationUnit<T,TUserKey, TTenant> : OrganizationUnit<T, TUserKey>,ITenant<TTenant>
     {
         #region Implementation of ITenant<TTenant>
 

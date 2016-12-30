@@ -2,9 +2,9 @@
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class UserOrganization<T, TUser, TOrg> : ImmutableModel<T,TUser>
+    public class UserOrganization<T, TUserKey, TOrgKey> : ImmutableModel<T,TUserKey>
     {
-        public TUser UserId { get; set; }
-        public TOrg OrganizationUnitId { get; set; }
+        public TUserKey UserId { get; set; }
+        public TOrgKey OrganizationUnitId { get; set; }
     }
 }

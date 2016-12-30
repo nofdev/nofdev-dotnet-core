@@ -6,12 +6,12 @@ using Nofdev.Core.Domain;
 
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
-    public class MultitenancyAuditLog : MultitenancyAuditLog<long, string, string>
+    public class MultitenancyAuditLog : MultitenancyAuditLog<string, string, string>
     {
         
     }
 
-    public class MultitenancyAuditLog<T, TUser,TTenant> : AuditLog<T, TUser>, ITenant<TTenant>
+    public class MultitenancyAuditLog<T, TUserKey,TTenant> : AuditLog<T, TUserKey>, ITenant<TTenant>
     {
         #region Implementation of ITenant<TTenant>
 

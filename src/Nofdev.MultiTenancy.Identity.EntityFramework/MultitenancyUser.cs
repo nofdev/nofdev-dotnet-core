@@ -5,26 +5,26 @@ using Nofdev.Core.Domain;
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
     /// <summary>
-    /// Minimal class for a <see cref="MultitenancyIdentityUser{TKey, TTenantKey, TLogin, TRole, TClaim}"/> with a
+    /// Minimal class for a <see cref="MultitenancyUserUser{TKey,TTenantKey,TLogin,TRole,TClaim}"/> with a
     /// <see cref="string"/> user <see cref="IdentityUser{TKey}.Id"/> and
-    /// <see cref="MultitenancyIdentityUserLogin{TKey, TTenant}.TenantId"/>.
+    /// <see cref="MultitenancyUserLogin.TenantId"/>.
     /// </summary>
-    public class MultitenancyIdentityUser :
-        MultitenancyIdentityUser<string, string, MultitenancyIdentityUserLogin, MultitenancyIdentityUserRole, MultitenancyIdentityUserClaim>
+    public class MultitenancyUser :
+        MultitenancyUser<string, string, MultitenancyUserLogin, MultitenancyUserRole, MultitenancyUserClaim>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultitenancyIdentityUser"/> class.
+        /// Initializes a new instance of the <see cref="MultitenancyUser"/> class.
         /// </summary>
-        public MultitenancyIdentityUser()
+        public MultitenancyUser()
         {
             Id = Guid.NewGuid().ToString();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MultitenancyIdentityUser"/> class.
+        /// Initializes a new instance of the <see cref="MultitenancyUser"/> class.
         /// </summary>
         /// <param name="userName">The <see cref="IdentityUser{TKey, TLogin, TRole, TClaim}.UserName"/> of the user.</param>
-        public MultitenancyIdentityUser(string userName)
+        public MultitenancyUser(string userName)
             : base(userName)
         {
         }
@@ -36,21 +36,21 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TKey">The type of <see cref="IdentityUser.Id"/> for a user.</typeparam>
     /// <typeparam name="TTenantKey">The type of <see cref="ITenant{TTenantKey}.TenantId"/> for a user.</typeparam>
     /// <typeparam name="TLogin">The type of user login.</typeparam>
-    /// <typeparam name="TRole">The type of user role.</typeparam>
-    /// <typeparam name="TClaim">The type of user claim.</typeparam>
-    public class MultitenancyIdentityUser<TKey, TTenantKey, TLogin, TRole, TClaim>
-        : IdentityUser<TKey, TClaim, TRole, TLogin>, ITenant<TTenantKey>,
+    /// <typeparam name="TUserRole">The type of user role.</typeparam>
+    /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
+    public class MultitenancyUser<TKey, TTenantKey, TLogin, TUserRole, TUserClaim>
+        : IdentityUser<TKey, TUserClaim, TUserRole, TLogin>, ITenant<TTenantKey>,
         IMutableModel<TKey,TKey> 
-        where TLogin : MultitenancyIdentityUserLogin<TKey, TTenantKey>
-        where TRole : IdentityUserRole<TKey>
-        where TClaim : IdentityUserClaim<TKey>
+        where TLogin : MultitenancyUserLogin<TKey, TTenantKey>
+        where TUserRole : IdentityUserRole<TKey>
+        where TUserClaim : IdentityUserClaim<TKey>
         where TKey : IEquatable<TKey>
     {
-        public MultitenancyIdentityUser()
+        public MultitenancyUser()
         {
         }
 
-        public MultitenancyIdentityUser(string userName) : base(userName)
+        public MultitenancyUser(string userName) : base(userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
                 throw new ArgumentNullException(nameof(userName));
