@@ -5,7 +5,7 @@ using Nofdev.Core.Domain;
 namespace Nofdev.Multitenancy.Identity.EntityFramework
 {
     /// <summary>
-    /// Minimal class for a <see cref="MultitenancyUserUser{TKey,TTenantKey,TLogin,TRole,TClaim}"/> with a
+    /// Minimal class for a <see cref="MultitenancyUser{TKey,TTenantKey,TLogin,TRole,TClaim}"/> with a
     /// <see cref="string"/> user <see cref="IdentityUser{TKey}.Id"/> and
     /// <see cref="MultitenancyUserLogin.TenantId"/>.
     /// </summary>
@@ -17,7 +17,6 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
         /// </summary>
         public MultitenancyUser()
         {
-            Id = Guid.NewGuid().ToString();
         }
 
         /// <summary>

@@ -16,10 +16,9 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     public class MultitenancyUserStore<TUser, TContext>
         :
             MultitenancyUserStore
-                <TUser, IdentityRole<string, MultitenancyUserRole, IdentityRoleClaim<string>>, TContext, string, string, MultitenancyUserClaim, MultitenancyUserRole,
-                    MultitenancyUserLogin, IdentityUserToken<string>>
-        where TUser : 
-        MultitenancyUser<string, string, MultitenancyUserLogin, MultitenancyUserRole, MultitenancyUserClaim>
+                <TUser, MultitenancyRole, TContext, string, string, MultitenancyUserClaim, MultitenancyUserRole,
+                    MultitenancyUserLogin, MultitenancyUserToken,MultitenancyRoleClaim>
+        where TUser :   MultitenancyUser
         where TContext : DbContext
     {
         public MultitenancyUserStore(TContext context, IdentityErrorDescriber describer = null)
@@ -40,17 +39,18 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TUserToken"></typeparam>
-    public class MultitenancyUserStore<TUser, TRole, TContext, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin, TUserToken>
-        : UserStore<TUser, TRole, TContext, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken>,ITenant<TTenantKey> 
-        where TUser : MultitenancyUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
-        where TRole : IdentityRole<TKey, TUserRole, IdentityRoleClaim<TKey>>
-        where TKey : IEquatable<TKey>
+    public class MultitenancyUserStore<TUser, TRole, TContext, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin, TUserToken,TRoleClaim>
+        : UserStore<TUser, TRole, TContext, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim>,ITenant<TTenantKey>
+           where TKey : IEquatable<TKey>
         where TTenantKey : IEquatable<TTenantKey>
-        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>, new()
-        where TUserRole : IdentityUserRole<TKey>, new()
-        where TUserClaim : IdentityUserClaim<TKey>, new()
         where TContext : DbContext
-        where TUserToken : IdentityUserToken<TKey>
+        where TUser : MultitenancyUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
+        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>
+        where TUserRole : MultitenancyUserRole<TKey, TTenantKey>
+        where TUserClaim : MultitenancyUserClaim<TKey, TTenantKey>
+        where TUserToken : MultitenancyUserToken<TKey, TTenantKey> 
+        where TRole : IdentityRole<TKey, TUserRole, TRoleClaim> 
+        where TRoleClaim : MultitenancyRoleClaim<TKey,TTenantKey>
     {
         /// <summary>
         /// Flag indicating whether this object has been disposed.
