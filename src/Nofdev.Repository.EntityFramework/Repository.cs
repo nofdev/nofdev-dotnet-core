@@ -209,14 +209,12 @@ namespace Nofdev.Repository.EntityFramework
 
         public  async Task<TEntity> GetAsync(params object[] keyValues)
         {
-            //return await _dbContext.DbContext.Set<TEntity>().FindAsync(keyValues);
-            throw new NotSupportedException();
+            return await _dbContext.DbContext.Set<TEntity>().FindAsync(keyValues);
         }
 
         public  async Task<TEntity> GetAsync(CancellationToken cancellationToken, params object[] keyValues)
         {
-            //return await _dbContext.DbContext.Set<TEntity>().FindAsync(cancellationToken, keyValues);
-            throw new NotSupportedException();
+            return await _dbContext.DbContext.Set<TEntity>().FindAsync(cancellationToken, keyValues);
         }
 
         public  async Task<bool> DeleteAsync(params object[] keyValues)
