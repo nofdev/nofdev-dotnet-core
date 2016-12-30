@@ -44,7 +44,7 @@ namespace Nofdev.Core.Domain
     {
         public virtual T Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public TUser CreatedBy { get; set; }
+        public virtual TUser CreatedBy { get; set; }
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace Nofdev.Core.Domain
 
     public abstract class MutableModel<T, TUser> : ImmutableModel<T, TUser>
     {
-        public TUser UpdatedBy { get; set; }
+        public virtual TUser UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
     }
 
