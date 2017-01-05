@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -39,23 +42,20 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
     /// <typeparam name="TUserClaim">The type of user claim.</typeparam>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TUserToken"></typeparam>
+    /// <typeparam name="TRoleClaim"></typeparam>
     public class MultitenancyUserStore<TUser, TRole, TContext, TKey, TTenantKey, TUserClaim, TUserRole, TUserLogin, TUserToken,TRoleClaim>
         : UserStore<TUser, TRole, TContext, TKey, TUserClaim, TUserRole, TUserLogin, TUserToken, TRoleClaim>,ITenant<TTenantKey>
            where TKey : IEquatable<TKey>
         where TTenantKey : IEquatable<TTenantKey>
         where TContext : DbContext
         where TUser : MultitenancyUser<TKey, TTenantKey, TUserLogin, TUserRole, TUserClaim>
-        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>
-        where TUserRole : MultitenancyUserRole<TKey, TTenantKey>
-        where TUserClaim : MultitenancyUserClaim<TKey, TTenantKey>
-        where TUserToken : MultitenancyUserToken<TKey, TTenantKey> 
+        where TUserLogin : MultitenancyUserLogin<TKey, TTenantKey>,new()
+        where TUserRole : MultitenancyUserRole<TKey, TTenantKey>, new() 
+        where TUserClaim : MultitenancyUserClaim<TKey, TTenantKey>, new() 
+        where TUserToken : MultitenancyUserToken<TKey, TTenantKey>, new() 
         where TRole : IdentityRole<TKey, TUserRole, TRoleClaim> 
         where TRoleClaim : MultitenancyRoleClaim<TKey,TTenantKey>
     {
-        /// <summary>
-        /// Flag indicating whether this object has been disposed.
-        /// </summary>
-        private bool _disposed;
 
         /// <summary>
         /// Backing field for the <see cref="Logins"/> property.
@@ -71,154 +71,193 @@ namespace Nofdev.Multitenancy.Identity.EntityFramework
         /// <summary>
         /// Gets the set of users.
         /// </summary>
-        private DbSet<TUserLogin> Logins
+        protected DbSet<TUserLogin> Logins => _logins ?? (_logins = Context.Set<TUserLogin>());
+
+        public override Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken = new CancellationToken())
         {
-            get { return _logins ?? (_logins = Context.Set<TUserLogin>()); }
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            ThrowIfInvalid();
+
+            user.TenantId = TenantId;
+            return base.CreateAsync(user, cancellationToken);
         }
 
-        ///// <summary>
-        ///// Creates a new user.
-        ///// </summary>
-        ///// <param name="user">The user to create.</param>
-        ///// <returns>An <see cref="Task"/> from which the operation can be awaited.</returns>
-        //public override Task CreateAsync(TUser user)
-        //{
-        //    if (user == null)
-        //        throw new ArgumentNullException("user");
+        /// <summary>
+        /// Finds a <typeparamref name="TUser"/> by their  <see cref="MultitenancyUser.NormalizedUserName"/>.
+        /// </summary>
+        /// <param name="normalizedUserName">The <see cref="MultitenancyUser.NormalizedUserName"/> of a <see cref="MultitenancyUser" />.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The <typeparamref name="TUser"/> if found; otherwise <c>null</c>.</returns>
+        public override Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken = new CancellationToken())
+        {
+            ThrowIfInvalid();
+            return Users.Where(u => u.NormalizedUserName == normalizedUserName && u.TenantId.Equals(TenantId)).SingleOrDefaultAsync(cancellationToken);
+        }
 
-        //    ThrowIfInvalid();
 
-        //    // Need to set the tenant Id.
-        //    user.TenantId = TenantId;
+        public override Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken = new CancellationToken())
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (login == null)
+                throw new ArgumentNullException(nameof(login));
 
-        //    return base.CreateAsync(user);
-        //}
+            ThrowIfInvalid();
 
-        ///// <summary>
-        ///// Finds a <typeparamref name="TUser"/> by their <see cref="IUser{TKey}.UserName"/>.
-        ///// </summary>
-        ///// <param name="userName">The <see cref="IUser{TKey}.UserName"/> of a <typeparamref name="TUser"/>.</param>
-        ///// <returns>The <typeparamref name="TUser"/> if found; otherwise <c>null</c>.</returns>
-        //public override Task<TUser> FindByNameAsync(string userName)
-        //{
-        //    ThrowIfInvalid();
-        //    return GetUserAggregateAsync(u => u.UserName == userName && u.TenantId.Equals(TenantId));
-        //}
+            var userLogin = new TUserLogin
+            {
+                TenantId = TenantId,
+                UserId = user.Id,
+                ProviderKey = login.ProviderKey,
+                LoginProvider = login.LoginProvider,
+            };
 
-        ///// <summary>
-        ///// Adds the external login for the <paramref name="user"/>.
-        ///// </summary>
-        ///// <param name="user">The user.</param>
-        ///// <param name="login">The login info.</param>
-        ///// <returns>An <see cref="Task"/> from which the operation can be awaited.</returns>
-        //public override Task AddLoginAsync(TUser user, UserLoginInfo login)
-        //{
-        //    if (user == null)
-        //        throw new ArgumentNullException("user");
-        //    if (login == null)
-        //        throw new ArgumentNullException("login");
+           user.Logins.Add(userLogin);
 
-        //    ThrowIfInvalid();
+            return Task.FromResult(0);
+        }
 
-        //    var userLogin = new TUserLogin
-        //        {
-        //            TenantId = TenantId,
-        //            UserId = user.Id,
-        //            ProviderKey = login.ProviderKey,
-        //            LoginProvider = login.LoginProvider,
-        //        };
+        /// <summary>
+        /// Fins a user bases on their external login.
+        /// </summary>
+        /// <param name="loginProvider"></param>
+        /// <param name="providerKey"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The user if found, otherwise <c>null</c>.</returns>
+        public override Task<TUser> FindByLoginAsync(string loginProvider, string providerKey,
+            CancellationToken cancellationToken = new CancellationToken())
+        {
+            ThrowIfInvalid();
 
-        //    user.Logins.Add(userLogin);
-        //    return Task.FromResult(0);
-        //}
+            TKey userId =  
+                (from l in Logins
+                 where l.LoginProvider == loginProvider
+                       && l.ProviderKey == providerKey
+                       && l.TenantId.Equals(TenantId)
+                 select l.UserId)
+                    .SingleOrDefaultAsync(cancellationToken).Result; 
 
-        ///// <summary>
-        ///// Fins a user bases on their external login.
-        ///// </summary>
-        ///// <param name="login">The login info.</param>
-        ///// <returns>The user if found, otherwise <c>null</c>.</returns>
-        //public override async Task<TUser> FindAsync(UserLoginInfo login)
-        //{
-        //    if (login == null)
-        //        throw new ArgumentNullException("login");
+            if (EqualityComparer<TKey>.Default.Equals(userId, default(TKey)))
+                return null;
 
-        //    ThrowIfInvalid();
+            return Users.Where(u => u.Id.Equals(userId)).SingleOrDefaultAsync(cancellationToken);
+        }
 
-        //    TKey userId = await
-        //        (from l in Logins
-        //         where l.LoginProvider == login.LoginProvider
-        //               && l.ProviderKey == login.ProviderKey
-        //               && l.TenantId.Equals(TenantId)
-        //         select l.UserId)
-        //            .SingleOrDefaultAsync()
-        //            .ConfigureAwait(false);
+        /// <summary>
+        /// Find a user by email
+        /// </summary>
+        /// <param name="normalizedEmail">The Email address of a <typeparamref name="TUser"/>.</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>The <typeparamref name="TUser"/> if found; otherwise <c>null</c>.</returns>
+        public override Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken = new CancellationToken())
+        {
+            ThrowIfInvalid();
+            return
+                Users.Where(u => u.NormalizedEmail == normalizedEmail && u.TenantId.Equals(TenantId))
+                    .SingleOrDefaultAsync(cancellationToken);
+        }
 
-        //    if (EqualityComparer<TKey>.Default.Equals(userId, default(TKey)))
-        //        return null;
 
-        //    return await GetUserAggregateAsync(u => u.Id.Equals(userId));
-        //}
+        protected override TUserRole CreateUserRole(TUser user, TRole role)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (role == null)
+                throw new ArgumentNullException(nameof(role));
 
-        ///// <summary>
-        ///// Find a user by email
-        ///// </summary>
-        ///// <param name="email">The Email address of a <typeparamref name="TUser"/>.</param>
-        ///// <returns>The <typeparamref name="TUser"/> if found; otherwise <c>null</c>.</returns>
-        //public override Task<TUser> FindByEmailAsync(string email)
-        //{
-        //    ThrowIfInvalid();
-        //    return GetUserAggregateAsync(u => u.Email.ToUpper() == email.ToUpper() && u.TenantId.Equals(TenantId));
-        //}
+            ThrowIfInvalid();
 
-        ///// <summary>
-        ///// Cleanly disposes of this object.
-        ///// </summary>
-        ///// <param name="disposing"><c>true</c> if the object is being disposed; otherwise <c>false</c>.</param>
-        //protected override void Dispose(bool disposing)
-        //{
-        //    if (!disposing || _disposed)
-        //        return;
+            var userRole = new TUserRole
+            {
+                UserId = user.Id,
+                RoleId = role.Id,
+                TenantId = TenantId
+            };
 
-        //    _disposed = true;
-        //    _logins = null;
-        //}
+            user.Roles.Add(userRole);
+
+            return userRole;
+        }
+
+        protected override TUserClaim CreateUserClaim(TUser user, Claim claim)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (claim == null)
+                throw new ArgumentNullException(nameof(claim));
+
+            ThrowIfInvalid();
+
+            var userClaim = new TUserClaim
+            {
+                TenantId = TenantId,
+                UserId = user.Id,
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value
+            };
+
+            user.Claims.Add(userClaim);
+
+            return userClaim;
+        }
+
+        protected override TUserLogin CreateUserLogin(TUser user, UserLoginInfo login)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+            if (login == null)
+                throw new ArgumentNullException(nameof(login));
+
+            ThrowIfInvalid();
+
+            var userLogin = new TUserLogin
+            {
+                TenantId = TenantId,
+                UserId = user.Id,
+                ProviderKey = login.ProviderKey,
+                LoginProvider = login.LoginProvider,
+            };
+
+            user.Logins.Add(userLogin);
+
+            return userLogin;
+        }
+
+        protected override  TUserToken CreateUserToken(TUser user, string loginProvider, string name, string value)
+        {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            ThrowIfInvalid();
+
+            var userToken = new TUserToken
+            {
+                TenantId = TenantId,
+                UserId = user.Id,
+                LoginProvider = loginProvider,
+                Name = name,
+                Value = value
+            };
+
+           SetTokenAsync(user, loginProvider, name, value, new CancellationToken()).Wait();
+
+            return userToken;
+        }
+
+
 
         /// <summary>
         /// Throws exceptions if the state of the object is invalid or has been disposed.
         /// </summary>
         private void ThrowIfInvalid()
         {
-            if (_disposed)
-                throw new ObjectDisposedException(GetType().Name);
-
             if (EqualityComparer<TTenantKey>.Default.Equals(TenantId, default(TTenantKey)))
                 throw new InvalidOperationException("The TenantId has not been set.");
         }
 
-        #region Overrides of UserStore<TUser,TRole,TContext,TKey,TUserClaim,TUserRole,TUserLogin,TUserToken>
 
-        protected override TUserRole CreateUserRole(TUser user, TRole role)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override TUserClaim CreateUserClaim(TUser user, Claim claim)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override TUserLogin CreateUserLogin(TUser user, UserLoginInfo login)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override TUserToken CreateUserToken(TUser user, string loginProvider, string name, string value)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        #endregion
 
         public MultitenancyUserStore(TContext context, IdentityErrorDescriber describer = null) : base(context, describer)
         {
