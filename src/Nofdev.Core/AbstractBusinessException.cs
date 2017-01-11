@@ -27,5 +27,6 @@ namespace Nofdev.Core
         protected AbstractBusinessException(string message, Exception innerException) : base(message, innerException)
         {
         }
+
     }
 }

@@ -67,9 +67,9 @@ namespace Nofdev.Server
             return  RegisterIoC(services);
         }
 
-        protected virtual void AddServices(IServiceCollection services)
+        protected virtual IServiceCollection AddServices(IServiceCollection services)
         {
-            
+            return services;
         }
 
         protected virtual void FilterAssemblies()

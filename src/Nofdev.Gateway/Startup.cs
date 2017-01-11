@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Nofdev.Gateway.Data;
-using Nofdev.Gateway.Models;
 
 namespace Nofdev.Gateway
 {
     public class Startup : Server.Startup
+           
     {
         public Startup(IHostingEnvironment env)
         {
@@ -28,49 +27,28 @@ namespace Nofdev.Gateway
 
         protected IIdentityServerBuilder IdentityServerBuilder;
 
-
-        protected override void AddServices(IServiceCollection services)
+        protected virtual void ConfigureIdentityService<TDbContext, TUser, TRole>(IServiceCollection services, string connectionName = "DefaultConnection")
+             where TDbContext : DbContext
+            where TUser : IdentityUser
+            where TRole : IdentityRole
         {
-            ConfigureDbContext(services);
-
-            ConfigureIdentity(services);
-
-            services.AddMvc();
-
-            // Add application services.
-            //services.AddTransient<IEmailSender, AuthMessageSender>();
-            //services.AddTransient<ISmsSender, AuthMessageSender>();
-
-
-            IdentityServerBuilder = services.AddIdentityServer()
-              .AddTemporarySigningCredential()
-              .AddInMemoryPersistedGrants();
-
-            ConfigureIdentityServer(IdentityServerBuilder);
-        }
-
-
-        protected virtual void ConfigureDbContext(IServiceCollection services)
-        {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-        }
-
-        protected virtual void ConfigureIdentity(IServiceCollection services)
-        {
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-              .AddEntityFrameworkStores<ApplicationDbContext>()
+            services.AddDbContext<TDbContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString(connectionName)));
+            services.AddIdentity<TUser, TRole>()
+              .AddEntityFrameworkStores<TDbContext>()
               .AddDefaultTokenProviders();
         }
 
         /// <summary>
         /// extend your own IdentityServer logic here,such as Client,Scope,and etc.
         /// </summary>
-        /// <param name="identityServerBuilder"></param>
-        protected virtual void ConfigureIdentityServer(IIdentityServerBuilder identityServerBuilder)
+        /// <param name="services"></param>
+        protected virtual IIdentityServerBuilder ConfigureIdentityServer(IServiceCollection services)
         {
-            identityServerBuilder.AddAspNetIdentity<ApplicationUser>();
+            //identityServerBuilder.AddAspNetIdentity<TUser>();
+          return  services.AddIdentityServer()
+              .AddTemporarySigningCredential()
+              .AddInMemoryPersistedGrants();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
