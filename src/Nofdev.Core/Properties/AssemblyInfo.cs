@@ -5,9 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+[assembly: AssemblyTitle("Nofdev.Core")]
+[assembly: AssemblyDescription("Nofdev core library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("nofdev.org")]
-[assembly: AssemblyProduct("Nofdev.Core")]
+[assembly: AssemblyProduct("Nofdev on .NET Core")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
