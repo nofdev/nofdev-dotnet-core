@@ -11,6 +11,11 @@ namespace Nofdev.Sample.RemoteAPI.Impl
             return DateTime.Now;
         }
 
+        public string Hello(string name)
+        {
+            return "hello," + name;
+        }
+
         #endregion
     }
 }

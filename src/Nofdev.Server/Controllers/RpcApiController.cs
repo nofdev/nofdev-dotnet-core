@@ -37,7 +37,7 @@ namespace Nofdev.Server.Controllers
         [Route("{packageName}/{interfaceName}/{methodName}")]
         [Route("[action]/{packageName}/{interfaceName}/{methodName}")]
         public  async Task<JsonResult> Json(string packageName, string interfaceName,
-            string methodName, [FromBody] string @params)
+            string methodName,  string @params)
         {
             var httpJsonResponse = new HttpJsonResponse<dynamic> {callId = ServiceContext.Current.GetCurrentCallId()};
             ExceptionMessage exceptionMessage = null;

@@ -11,8 +11,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Server", "..\src\Nof
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Client", "..\src\Nofdev.Client\Nofdev.Client.xproj", "{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Repository.EntityFramework", "..\src\Nofdev.Repository.EntityFramework\Nofdev.Repository.EntityFramework.xproj", "{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "framework", "framework", "{EF678017-E58C-42F5-B9A1-02B2CFC85A0B}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Sample.Server", "Nofdev.Sample.Server\Nofdev.Sample.Server.xproj", "{31543DDC-64DD-47BD-95AA-F60907BE80D9}"
@@ -31,8 +29,6 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Sample.RemoteAPI.Impl", "Nofdev.Sample.RemoteAPI.Impl\Nofdev.Sample.RemoteAPI.Impl.xproj", "{528E6208-5C65-42D5-8B51-97898295DDC5}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Gateway", "..\src\Nofdev.Gateway\Nofdev.Gateway.xproj", "{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.MultiTenancy.Identity.EntityFramework", "..\src\Nofdev.MultiTenancy.Identity.EntityFramework\Nofdev.MultiTenancy.Identity.EntityFramework.xproj", "{EA20879E-819C-45AC-96E4-A1525E5A7EF7}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nofdev.Sample.Gateway", "Nofdev.Sample.Gateway\Nofdev.Sample.Gateway.xproj", "{EF103188-5CA3-46A4-B185-5CF16C8626A8}"
 EndProject
@@ -58,10 +54,6 @@ Global
 		{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{31543DDC-64DD-47BD-95AA-F60907BE80D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{31543DDC-64DD-47BD-95AA-F60907BE80D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31543DDC-64DD-47BD-95AA-F60907BE80D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -86,10 +78,6 @@ Global
 		{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA20879E-819C-45AC-96E4-A1525E5A7EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA20879E-819C-45AC-96E4-A1525E5A7EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA20879E-819C-45AC-96E4-A1525E5A7EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA20879E-819C-45AC-96E4-A1525E5A7EF7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF103188-5CA3-46A4-B185-5CF16C8626A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF103188-5CA3-46A4-B185-5CF16C8626A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF103188-5CA3-46A4-B185-5CF16C8626A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -103,8 +91,6 @@ Global
 		{B1687DE9-5638-49AE-BD34-A27A8D6DF931} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
 		{7CE3E13D-A884-4E65-961F-04A87652151C} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
 		{3E01DC65-9B5C-45FC-BAC9-1AA4A56456B4} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
-		{E5727C21-0153-47C0-A5E2-E1BEEFC73EF1} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
 		{71D8D46B-21B3-4F15-B7C6-8C720FA9C27D} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
-		{EA20879E-819C-45AC-96E4-A1525E5A7EF7} = {EF678017-E58C-42F5-B9A1-02B2CFC85A0B}
 	EndGlobalSection
 EndGlobal

@@ -62,12 +62,18 @@ namespace Nofdev.Client
                 paras = new Dictionary<string, string>();
             }
 
-            var jsonObject = JsonConvert.SerializeObject(paras);
-            var postContent = new StringContent(jsonObject, Encoding.UTF8, "application/json");
-            var httpResponseMessage = await hc.PostAsync(remoteUrl, postContent).ConfigureAwait(false);
+            //var jsonObject = JsonConvert.SerializeObject(paras);
+            //var postContent = new StringContent(jsonObject, Encoding.UTF8, "application/x-www-form-urlencoded");
+            //var httpResponseMessage = await hc.PostAsync(remoteUrl, postContent).ConfigureAwait(false);
+            //var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            //var contentType = httpResponseMessage.Content.Headers.ContentType;
+            //var httpStatusCode = httpResponseMessage.StatusCode;
+
+            var httpResponseMessage = await hc.PostAsync(remoteUrl, new FormUrlEncodedContent(paras)).ConfigureAwait(false);
             var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
             var contentType = httpResponseMessage.Content.Headers.ContentType;
             var httpStatusCode = httpResponseMessage.StatusCode;
+
             return new HttpMessageSimple
             {
                 Body = content,

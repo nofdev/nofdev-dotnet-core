@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+
+<package>
+  <metadata>
+    <!--*-->
+    <id>Nofdev.Client</id>
+    <!--*-->
+    <version>1.0-rc2</version>
+    <title></title>
+    <!--*-->
+    <authors>Bob Chin</authors>
+    <owners>Nofdev Studio</owners>
+    <!--
+    <licenseUrl></licenseUrl>
+    <projectUrl></projectUrl>
+    <iconUrl></iconUrl>
+-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--*-->
+    <description>Nofdev RPC Client</description>
+    <!--*-->
+    <releaseNotes> </releaseNotes>
+    <copyright>copyright &#174; Nofdev Studio,2016-2017</copyright>
+    <tags> </tags>
+    <dependencies>
+      <dependency id="Nofdev.Core" version="1.0-rc1"></dependency>
+      <dependency id="Castle.Core" version="4.0.0-beta002"></dependency>
+      <dependency id="Newtonsoft.Json" version="9.0.1"></dependency>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard1.6.1\Nofdev.Client.*" target="lib\netstandard1.6.1\"></file>
+    <file src="bin\Release\netcoreapp1.1\Nofdev.Client.*" target="lib\netcoreapp1.1\"></file>
+  </files>
+</package>

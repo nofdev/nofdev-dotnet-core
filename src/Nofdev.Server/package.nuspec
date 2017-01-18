@@ -1,0 +1,37 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <!--*-->
+    <id>Nofdev.Server</id>
+    <!--*-->
+    <version>1.0-beta4</version>
+    <title></title>
+    <!--*-->
+    <authors>Bob Chin</authors>
+    <owners>Nofdev Studio</owners>
+<!--
+    <licenseUrl></licenseUrl>
+    <projectUrl></projectUrl>
+    <iconUrl></iconUrl>
+-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--*-->
+    <description>Nofdev RPC Server</description>
+    <!--*-->
+    <releaseNotes> </releaseNotes>
+    <copyright>copyright &#174; Nofdev Studio,2016-2017</copyright>
+    <tags> </tags>
+    <dependencies>
+        <dependency id="Nofdev.Client" version="1.0-rc2"></dependency>
+      <dependency id="Autofac.Extensions.DependencyInjection" version="4.0.0"></dependency>
+      <dependency id="Castle.Core" version="4.0.0-beta002"></dependency>
+      <dependency id="Microsoft.AspNetCore.Mvc" version="1.1.0"></dependency>
+      <dependency id="Microsoft.AspNetCore.Routing" version="1.1.0"></dependency>
+    </dependencies>
+    
+  </metadata>
+  <files>
+    <file src="bin\Release\netstandard1.6.1\Nofdev.Server.*" target="lib\netstandard1.6.1\"></file>
+    <file src="bin\Release\netcoreapp1.1\Nofdev.Server.*" target="lib\netcoreapp1.1\"></file>
+  </files>
+</package>

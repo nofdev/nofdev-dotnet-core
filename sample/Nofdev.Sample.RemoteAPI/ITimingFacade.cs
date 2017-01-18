@@ -8,5 +8,6 @@ namespace Nofdev.Sample.RemoteAPI
     public interface ITimingFacade
     {
         DateTime GetNow();
+        string Hello(string name);
     }
 }

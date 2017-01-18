@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using Nofdev.Client;
 using Nofdev.Core.Dependency;
 using Nofdev.Core.SOA;
@@ -32,6 +31,7 @@ namespace Nofdev.Server
             
         }
 
+
         public Startup(IHostingEnvironment env)
         {
             var builder = CreateConfigurationBuilder(env);
@@ -43,7 +43,7 @@ namespace Nofdev.Server
 
         }
 
-        protected  IConfigurationBuilder CreateConfigurationBuilder(IHostingEnvironment env)
+        protected   IConfigurationBuilder CreateConfigurationBuilder(IHostingEnvironment env)
         {
            var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -123,9 +123,6 @@ namespace Nofdev.Server
         public virtual  void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
 
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-            loggerFactory.AddNLog();
 
             app.UseMvc();
             appLifetime.ApplicationStopped.Register(() => this.ApplicationContainer.Dispose());
