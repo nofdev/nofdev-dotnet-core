@@ -6,25 +6,46 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
 
-namespace Nofdev.Core.Util
+namespace Nofdev.Server.Util
 {
-    public static class ComponentScan
+    public  class ComponentScan
     {
+        private readonly ServiceScanSettings _settings;
+
+        public ComponentScan(IConfiguration configuration)
+        {
+            _settings = configuration.GetSection("ServiceScanSettings")?.Get<ServiceScanSettings>();
+        }
+
+
         private const string Ext = ".dll";
 
-        private static readonly ConcurrentDictionary<string, string[]> _fileCache =
+        private  readonly ConcurrentDictionary<string, string[]> _fileCache =
             new ConcurrentDictionary<string, string[]>();
 
 
-        public static IEnumerable<Assembly> GetAssemblies(string path)
+        public  IEnumerable<Assembly> GetAssemblies(string path)
         {
             var files = GetFiles(path);
             var assemblies = new List<Assembly>();
             foreach (var file in files)
             {
+                if (_settings != null)
+                    {
+                        var fileName = Path.GetFileNameWithoutExtension(file);
+                        if (!string.IsNullOrWhiteSpace(_settings.AssemblyNameRegex) &&
+                            !Regex.IsMatch(fileName, _settings.AssemblyNameRegex,
+                                RegexOptions.Compiled | RegexOptions.IgnoreCase))
+                            continue;
+                        if (_settings.SkipAssemblies != null && _settings.SkipAssemblies.Contains(fileName))
+                            continue;
+
+                    }
                 try
                 {
+                  
                     var name = AssemblyLoadContext.GetAssemblyName(file);
                     assemblies.Add(Assembly.Load(name));
                     //yield return Assembly.Load(name);
@@ -44,7 +65,7 @@ namespace Nofdev.Core.Util
         /// <param name="path"></param>
         /// <param name="attributeTypes"></param>
         /// <returns></returns>
-        public static Dictionary<string, Type[]> GetTypes(string path, params Type[] attributeTypes)
+        public  Dictionary<string, Type[]> GetTypes(string path, params Type[] attributeTypes)
         {
             var dict = new Dictionary<string, Type[]>();
             var files = GetFiles(path);
@@ -60,7 +81,7 @@ namespace Nofdev.Core.Util
         }
 
 
-        public static Dictionary<string, Type[]> GetTypes<T>(string path) where T : Attribute
+        public  Dictionary<string, Type[]> GetTypes<T>(string path) where T : Attribute
         {
             var dict = new Dictionary<string, Type[]>();
             var files = GetFiles(path);
@@ -78,12 +99,12 @@ namespace Nofdev.Core.Util
         }
 
 
-        public static Dictionary<string, Type[]> GetTypes(string path, string typeNameRegex)
+        public  Dictionary<string, Type[]> GetTypes(string path, string typeNameRegex)
         {
             return GetTypes(path, null, typeNameRegex);
         }
 
-        public static Dictionary<string, Type[]> GetTypes(string path, string nameSpaceRegex, string typeNameRegex)
+        public  Dictionary<string, Type[]> GetTypes(string path, string nameSpaceRegex, string typeNameRegex)
         {
             var dict = new Dictionary<string, Type[]>();
             var files = GetFiles(path);
@@ -100,12 +121,12 @@ namespace Nofdev.Core.Util
             return dict;
         }
 
-        private static string[] GetFiles(string path)
+        private  string[] GetFiles(string path)
         {
             return _fileCache.GetOrAdd(path, SearchFiles);
         }
 
-        private static string[] SearchFiles(string path)
+        private  string[] SearchFiles(string path)
         {
             if (File.Exists(path))
                 return new[] {path};
@@ -146,18 +167,18 @@ namespace Nofdev.Core.Util
                 : dir2.GetFiles(pattern, SearchOption.AllDirectories).Select(m => m.FullName).ToArray();
         }
 
-        private static IEnumerable<Type> GetTypesFrom(string fileName, params Type[] attributeTypes)
+        private  IEnumerable<Type> GetTypesFrom(string fileName, params Type[] attributeTypes)
         {
             var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(fileName);
-            return asm.GetTypes(attributeTypes);
+            return GetTypes(asm,attributeTypes);
         }
 
-        public static IEnumerable<Type> GetTypes<T>(this Assembly asm) where T : Attribute
+        public  IEnumerable<Type> GetTypes<T>(Assembly asm) where T : Attribute
         {
-            return asm.GetTypes(typeof (T));
+            return  GetTypes(asm,typeof (T));
         }
 
-        public static IEnumerable<Type> GetTypes(this Assembly asm, params Type[] attributeTypes)
+        public  IEnumerable<Type> GetTypes(Assembly asm, params Type[] attributeTypes)
         {
             return
                 asm.GetTypes()
@@ -168,7 +189,7 @@ namespace Nofdev.Core.Util
                                 .Any(a => attributeTypes.Any(ta => ta == a.GetType())));
         }
 
-        private static IEnumerable<Type> GetTypesFrom(string fileName, string nameSpaceRegex, string typeNameRegex)
+        private  IEnumerable<Type> GetTypesFrom(string fileName, string nameSpaceRegex, string typeNameRegex)
         {
             var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(fileName);
             var types = asm.GetTypes();

@@ -16,8 +16,8 @@ using Microsoft.Extensions.Logging;
 using Nofdev.Client;
 using Nofdev.Core.Dependency;
 using Nofdev.Core.SOA;
-using Nofdev.Core.Util;
 using Nofdev.Client.Interceptors;
+using Nofdev.Server.Util;
 
 namespace Nofdev.Server
 {
@@ -37,7 +37,7 @@ namespace Nofdev.Server
             var builder = CreateConfigurationBuilder(env);
             Configuration = builder.Build();
 
-            Assemblies = ComponentScan.GetAssemblies(env.ContentRootPath).ToList();
+            Assemblies = new ComponentScan(Configuration).GetAssemblies(env.ContentRootPath).ToList();
 
             Nofdev.Client.Bootstrap.Startup(env.ContentRootPath);
 
@@ -63,7 +63,6 @@ namespace Nofdev.Server
         {
             services.AddMvc();
             AddServices(services);
-            FilterAssemblies();
             return  RegisterIoC(services);
         }
 
@@ -72,10 +71,6 @@ namespace Nofdev.Server
             return services;
         }
 
-        protected virtual void FilterAssemblies()
-        {
-            
-        }
 
         protected virtual IServiceProvider RegisterIoC(IServiceCollection services)
         {
