@@ -20,7 +20,7 @@ namespace Nofdev.Core.SOA
 
         private readonly Dictionary<string, object> _items = new Dictionary<string, object>();
         private const string CallIdKey = "CALLID";
-        private const string TenantContextKey = "TENANT";
+        private const string UserKey = "USERKEY";
        private static readonly ReaderWriterLockSlim _locker = new ReaderWriterLockSlim();
         private ServiceContext()
         {
@@ -49,11 +49,11 @@ namespace Nofdev.Core.SOA
         {
             get
             {
-                return this[TenantContextKey] as User;
+                return  this[UserKey] as User;
             }
             set
             {
-                this[TenantContextKey] = value;
+                this[UserKey] = value;
             }
         }
 
@@ -75,7 +75,7 @@ namespace Nofdev.Core.SOA
         {
             get {
                 key = key.ToUpper();
-                return _items[key]; }
+                return _items.ContainsKey(key) ? _items[key] : null; }
             set {
                 key = key.ToUpper();
                 if (_items.ContainsKey(key))
