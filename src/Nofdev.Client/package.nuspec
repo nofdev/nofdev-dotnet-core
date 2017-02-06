@@ -5,7 +5,7 @@
     <!--*-->
     <id>Nofdev.Client</id>
     <!--*-->
-    <version>1.0-rc2</version>
+    <version>1.0-rc2-1</version>
     <title></title>
     <!--*-->
     <authors>Bob Chin</authors>
@@ -23,7 +23,7 @@
     <copyright>copyright &#174; Nofdev Studio,2016-2017</copyright>
     <tags> </tags>
     <dependencies>
-      <dependency id="Nofdev.Core" version="1.0-rc1"></dependency>
+      <dependency id="Nofdev.Core" version="1.0-rc2"></dependency>
       <dependency id="Castle.Core" version="4.0.0-beta002"></dependency>
       <dependency id="Newtonsoft.Json" version="9.0.1"></dependency>
     </dependencies>

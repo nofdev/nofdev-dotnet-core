@@ -37,7 +37,12 @@ namespace Nofdev.Messaging
 
         private void Listen(string pInterfacePath, MethodInfo method, object obj)
         {
-            var factory = new ConnectionFactory {HostName = _topicConsumerConfig.BootstrapServers};
+            var factory = new ConnectionFactory
+            {
+                HostName = _topicConsumerConfig.BootstrapServers,
+                UserName = _topicConsumerConfig.UserName,
+                Password = _topicConsumerConfig.Password
+            };
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
 

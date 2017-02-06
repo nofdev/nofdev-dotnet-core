@@ -10,7 +10,7 @@ namespace Nofdev.Messaging
     {
         private readonly TopicProducerConfig _topicProducerConfig;
 
-        public TopicProducerProxy( TopicProducerConfig topicProducerConfig)
+        public TopicProducerProxy(TopicProducerConfig topicProducerConfig)
         {
             _topicProducerConfig = topicProducerConfig;
         }
@@ -26,7 +26,12 @@ namespace Nofdev.Messaging
             topicMessage.Payload = invocation.Arguments;
             var message = JsonConvert.SerializeObject(topicMessage);
 
-            var factory = new ConnectionFactory { HostName = _topicProducerConfig.BootstrapServers };
+            var factory = new ConnectionFactory
+            {
+                HostName = _topicProducerConfig.BootstrapServers,
+                UserName = _topicProducerConfig.UserName,
+                Password = _topicProducerConfig.Password
+            };
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -39,7 +44,7 @@ namespace Nofdev.Messaging
                 properties.Persistent = true;
                 //properties.Headers = new Dictionary<string, object>();
                 //todo:need headers?
-                channel.BasicPublish(exchange,rk, properties, body);
+                channel.BasicPublish(exchange, rk, properties, body);
             }
         }
 
