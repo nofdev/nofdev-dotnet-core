@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Nofdev.Core</AssemblyName>
+    <RootNamespace>Nofdev.Core</RootNamespace>
+    <Product>Nofdev</Product>
+    <Authors>nofdev.org</Authors>
+    <Company>nofdev.org</Company>
+  </PropertyGroup>
+
+</Project>
