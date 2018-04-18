@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+   <Copyright>copyright © nofdev.org</Copyright>
+   <Product>Nofdev on .NET Core</Product>
+   <Company>nofdev.org</Company>
+   <Authors>nofdev.org</Authors>
+   <Owners>nofdev.org</Owners>
+</PropertyGroup>
+</Project>

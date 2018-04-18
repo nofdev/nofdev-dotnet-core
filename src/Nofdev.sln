@@ -3,11 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Nofdev.Core.csproj", "{E16AB260-43BC-4E60-921A-908516B62845}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nofdev.Core", "Core\Nofdev.Core.csproj", "{E16AB260-43BC-4E60-921A-908516B62845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Nofdev.Service.csproj", "{730EE5CC-D8B1-4807-B2BF-22E57B373E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nofdev.Service", "Service\Nofdev.Service.csproj", "{730EE5CC-D8B1-4807-B2BF-22E57B373E24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Nofdev.Client.csproj", "{6A1EF6C2-389D-455A-89C2-0AF880F79BCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nofdev.Client", "Client\Nofdev.Client.csproj", "{6A1EF6C2-389D-455A-89C2-0AF880F79BCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E174B1A-F1B1-427C-904C-D47FC5EC2D60}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

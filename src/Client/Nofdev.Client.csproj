@@ -4,9 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Nofdev.Client</AssemblyName>
     <RootNamespace>Nofdev.Client</RootNamespace>
-    <Authors>nofdev.org</Authors>
-    <Company>nofdev.org</Company>
-    <Product>Nofdev</Product>
+    <Description>Nofdev RPC client</Description>
+    <PackageId>Nofdev.Client</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageReleaseNotes>first launch</PackageReleaseNotes>
+    <Version>1.0.0</Version>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
