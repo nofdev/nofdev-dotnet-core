@@ -13,46 +13,36 @@ namespace Nofdev.Service.Util
     public class ComponentScan
     {
         private readonly ILogger<ComponentScan> _logger;
-        //private readonly ServiceScanSettings _settings;
+        //private readonly ServiceScanOptions _settings;
 
         public ComponentScan(ILogger<ComponentScan> logger)
         {
             _logger = logger;
-            //_settings = settings;
-            //_settings = configuration.GetSection("ServiceScanSettings")?.Get<ServiceScanSettings>();
+            //_settings = options;
+            //_settings = configuration.GetSection("ServiceScanOptions")?.Get<ServiceScanOptions>();
         }
-        
+
         private const string Ext = ".dll";
 
-        private readonly ConcurrentDictionary<string, string[]> _fileCache =  new ConcurrentDictionary<string, string[]>();
+        private readonly ConcurrentDictionary<string, string[]> _fileCache =
+            new ConcurrentDictionary<string, string[]>();
 
-        public IEnumerable<Assembly> GetAssemblies(string path, ServiceScanSettings settings)
+        public IEnumerable<Assembly> GetAssemblies(string path)
         {
             var files = GetFiles(path);
             foreach (var file in files)
             {
-                if (settings != null)
-                {
-                    var fileName = Path.GetFileNameWithoutExtension(file);
-                    if (!string.IsNullOrWhiteSpace(settings.AssemblyNameRegex) &&
-                        !Regex.IsMatch(fileName, settings.AssemblyNameRegex,
-                            RegexOptions.Compiled | RegexOptions.IgnoreCase))
-                        continue;
-                    if (settings.SkipAssemblies != null && settings.SkipAssemblies.Contains(fileName))
-                        continue;
-
-                }
                 Assembly asm = null;
                 try
                 {
-
                     var name = AssemblyLoadContext.GetAssemblyName(file);
                     asm = Assembly.Load(name);
                 }
                 catch (Exception ex)
                 {
-                   _logger.LogWarning(ex,$"Load {file} failed.");
+                    _logger.LogWarning(ex, $"Load {file} failed.");
                 }
+
                 if (asm != null)
                     yield return asm;
             }
@@ -76,6 +66,7 @@ namespace Nofdev.Service.Util
                     dict.Add(file, types);
                 }
             }
+
             return dict;
         }
 
@@ -94,6 +85,7 @@ namespace Nofdev.Service.Util
                     dict.Add(file, types);
                 }
             }
+
             return dict;
         }
 
@@ -117,6 +109,7 @@ namespace Nofdev.Service.Util
                     dict.Add(file, types);
                 }
             }
+
             return dict;
         }
 
@@ -128,7 +121,7 @@ namespace Nofdev.Service.Util
         private string[] SearchFiles(string path)
         {
             if (File.Exists(path))
-                return new[] { path };
+                return new[] {path};
             path = path.Replace("/", "\\");
             if (!path.Contains("*") && !path.Contains("?"))
             {
@@ -139,7 +132,8 @@ namespace Nofdev.Service.Util
                     {
                         return null;
                     }
-                    return new[] { path };
+
+                    return new[] {path};
                 }
 
                 var dir = new DirectoryInfo(path);
@@ -147,6 +141,7 @@ namespace Nofdev.Service.Util
                 {
                     return null;
                 }
+
                 return dir.GetFiles("*" + Ext, SearchOption.AllDirectories).Select(m => m.FullName).ToArray();
             }
 

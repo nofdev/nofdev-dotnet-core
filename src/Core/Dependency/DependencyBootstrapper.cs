@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Nofdev.Core.Dependency
 {
@@ -42,6 +43,30 @@ namespace Nofdev.Core.Dependency
             });
 
             return interfaceList;
+        }
+
+        public static void Pair(Assembly interfaceAssembly, Assembly implementAssembly, Action<Type, Type> registerAction, string regex = null)
+        {
+            var interfaceList = interfaceAssembly.GetTypes().Where(t =>
+                (t.GetTypeInfo().IsInterface || t.GetTypeInfo().IsAbstract) &&
+                (regex == null || Regex.IsMatch(t.Name, regex))).ToList();
+            var types = implementAssembly.GetTypes().Where(t => t.GetTypeInfo().IsClass && !t.GetTypeInfo().IsAbstract).ToList();
+            types.ForEach(t =>
+            {
+                var allInterfaces = t.GetInterfaces().ToList();
+                var interfaces = allInterfaces.Where(x => !allInterfaces.Any(y => y.GetInterfaces().Contains(x))).ToList();
+                if (interfaces.Any())
+                    interfaces = ExcludeBaseInterfaces(t, interfaces).ToList();
+                interfaces.ForEach(i =>
+                {
+                    foreach (var type in interfaceList.Where(m => m == i))
+                    {
+                        registerAction(type, t);
+                        interfaceList.Remove(type);
+                        break;
+                    }
+                });
+            });
         }
 
         private static IEnumerable<Type> ExcludeBaseInterfaces(Type t, IEnumerable<Type> interfaces)

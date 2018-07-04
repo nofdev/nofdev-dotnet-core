@@ -14,7 +14,8 @@ namespace Nofdev.Service.Util
             object val = null;
 
             var methods = serviceType.GetTypeInfo().GetMethods();
-            var method = methods.FirstOrDefault(m => string.Compare(m.Name, methodName, StringComparison.CurrentCultureIgnoreCase) == 0);
+            var method = methods.FirstOrDefault(m =>
+                string.Compare(m.Name, methodName, StringComparison.CurrentCultureIgnoreCase) == 0);
             if (method != null)
             {
                 //async task
@@ -24,31 +25,31 @@ namespace Nofdev.Service.Util
                     {
                         var task =
                             (Task)
-                                method.Invoke(service,
-                                    (await DeserializeAsync(@params, method.GetParameters().Select(p => p.ParameterType).ToArray())).ToArray());
+                            method.Invoke(service,
+                                (await DeserializeAsync(@params,
+                                    method.GetParameters().Select(p => p.ParameterType).ToArray())).ToArray());
                         await task.ContinueWith(it =>
                         {
                             dynamic dtask = it;
                             val = dtask.Result;
-
                         });
                     }
                     else
                     {
-                        var task = (Task)method.Invoke(service, null);
+                        var task = (Task) method.Invoke(service, null);
                         await task.ContinueWith(it =>
                         {
                             dynamic dtask = it;
                             val = dtask.Result;
                         });
                     }
-
                 }
                 else
                 {
                     if (@params != null && "null" != @params)
                     {
-                        val = method.Invoke(service,Deserialize(@params, method.GetParameters().Select(p => p.ParameterType).ToArray())
+                        val = method.Invoke(service,
+                            Deserialize(@params, method.GetParameters().Select(p => p.ParameterType).ToArray())
                                 .ToArray());
                     }
                     else
@@ -79,6 +80,5 @@ namespace Nofdev.Service.Util
             var array = JArray.Parse(rawParams);
             return await Task.Run(() => array.Select((item, i) => item.ToObject(paramTypes[i])));
         }
-
     }
 }

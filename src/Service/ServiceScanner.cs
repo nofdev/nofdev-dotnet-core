@@ -2,37 +2,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Nofdev.Core.SOA;
 using Nofdev.Core.SOA.Annotations;
 using Nofdev.Core.Util;
 
-namespace Nofdev.Core.SOA
+namespace Nofdev.Service
 {
-    public class ServiceBootstrapper
+    public class ServiceScanner
     {
+        protected ServiceScanner()
+        {
+            
+        }
 
-        //private static ServiceBootstrapper _instance;
-        //public static ServiceBootstrapper Instance => _instance ?? (_instance = new ServiceBootstrapper());
+        private static ServiceScanner _instance;
+        public static ServiceScanner Instance => _instance ?? (_instance = new ServiceScanner());
 
         public static ServiceRegistry UrlTypes { get; } = new ServiceRegistry();
 
-        public Dictionary<string, List<Type>> UnmatchedInterfaces { get; } = new Dictionary<string, List<Type>>();
-
+  
         /// <summary>
         /// 
         /// </summary>
         /// <param name="assemblies"></param>
-        /// <param name="iocTypes">types were registered in IoC container</param>
-        public  void Scan(IEnumerable<Assembly> assemblies, ICollection<Type> iocTypes)
+        public  void Scan(IEnumerable<Assembly> assemblies)
         {
             var types = Enum.GetNames(typeof(ServiceType)).ToList();
-            foreach (var asm in assemblies)//.Where(a => a.GetCustomAttributes<BootstrapAttribute>().Any()))
+            foreach (var asm in assemblies)
             {
                 types.ForEach(t =>
                 {
-                    Add(ScanByNameConvention(asm,t),t,iocTypes);
+                    Add(ScanByNameConvention(asm,t),t);
                 });
-                Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade), iocTypes);
-                Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service), iocTypes);
+                Add(Scan<FacadeServiceAttribute>(asm),Enum.GetName(typeof(ServiceType), ServiceType.Facade));
+                Add(Scan<DomainServiceAttribute>(asm), Enum.GetName(typeof(ServiceType), ServiceType.Service));
             }
         }
 
@@ -48,26 +51,20 @@ namespace Nofdev.Core.SOA
                 types.Where(t => t.GetTypeInfo().IsInterface && suffixes.Any(s => t.Name.EndsWith(s)));
         }
 
-        private  void Add(IEnumerable<Type> types, string layer, ICollection<Type> excludedTypes)
+        public void Add(IEnumerable<Type> types, string layer)
         {
             foreach (var type in types)
             {
-                var key = GetInterfaceKey(type, layer);
-
-                if (!excludedTypes.Contains(type))
-                {
-                    if (!UnmatchedInterfaces.ContainsKey(layer))
-                    {
-                        UnmatchedInterfaces.Add(layer, new List<Type>());
-                    }
-                    if(!UnmatchedInterfaces[layer].Contains(type))
-                     UnmatchedInterfaces[layer].Add(type);
-                    continue;
-                }
-
-                if (!UrlTypes.ContainsKey(key))
-                    UrlTypes.Add(key, type);
+               Add(type,layer);
             }
+        }
+
+        public void Add(Type type, string layer)
+        {
+            var key = GetInterfaceKey(type, layer);
+
+            if (!UrlTypes.ContainsKey(key))
+                UrlTypes.Add(key, type);
         }
 
 

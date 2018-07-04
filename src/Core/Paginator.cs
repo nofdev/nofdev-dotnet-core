@@ -13,7 +13,7 @@
         /// <summary>
         ///     当前页码
         /// </summary>
-        public long Page { get; set; } = DefaultFirstPage;
+        public int Page { get; set; } = DefaultFirstPage;
 
         /// <summary>
         ///     每页显示多少条记录
