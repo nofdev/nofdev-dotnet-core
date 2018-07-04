@@ -16,29 +16,53 @@ namespace Nofdev.Client
     {
         private readonly ILogger<DefaultProxyStrategy> _logger;
 
-        public DefaultProxyStrategy(ILogger<DefaultProxyStrategy> logger)
+        private static readonly string[] ServiceLayerPostfixes = { "facade",  "service" };
+        public const string Protocol = "json";
+        private readonly string _baseUrl;
+
+        public DefaultProxyStrategy(string baseURL, ILogger<DefaultProxyStrategy> logger)
         {
+            _baseUrl = baseURL;
             _logger = logger;
         }
 
-        public string GetRemoteUrl(Type interfaceType, MethodInfo method)
+        protected Tuple<string, string> GetServiceInfo(Type inter)
         {
-            var location = ConfigManager.GetServiceLocationByType(interfaceType);
-            string serviceLayer = location.Layer;
-            string interName = interfaceType.Name.RemovePrefixI();
+            if (ServiceProxyBuilder.TypeLocations.ContainsKey(inter.FullName))
+            {
+                var s = ServiceProxyBuilder.TypeLocations[inter.FullName];
+                return new Tuple<string, string>(s.Layer, inter.Name.RemovePrefixI());
+            }
+            foreach (var postfix in ServiceLayerPostfixes)
+            {
+                if (inter.Name.EndsWith(postfix, StringComparison.CurrentCultureIgnoreCase))
+                    return new Tuple<string, string>(postfix, inter.Name.Substring(0, inter.Name.Length - postfix.Length).RemovePrefixI());
+            }
+            throw new NotSupportedException(inter.FullName + " is not a supported service type.");
+        }
+
+
+
+        public string GetRemoteUrl(Type inter, MethodInfo method)
+        {
+            _logger.LogDebug($"The baseUrl is {_baseUrl}");
+            var serviceInfo = GetServiceInfo(inter);
+            string serviceLayer = serviceInfo.Item1;
+            string interName = serviceInfo.Item2;
             var sb = new StringBuilder();
-            sb.Append(location.BaseUrl);
+            sb.Append(_baseUrl);
             sb.Append("/");
             sb.Append(serviceLayer);
-            sb.AppendFormat("/{0}/",location.Protocol);
-            var moduleName = interfaceType.Namespace;
+            sb.AppendFormat("/{0}/", Protocol);
+            var moduleName = inter.Namespace;
             sb.Append(moduleName);
             sb.Append("/");
             sb.Append(interName);
             sb.Append("/");
             sb.Append(method.Name);
             var remoteURL = sb.ToString();
-            _logger.LogDebug( $"The remoteUrl is {remoteURL}");
+            _logger.LogDebug($"The remoteUrl is {remoteURL}");
+            Console.WriteLine(remoteURL);
             return remoteURL;
         }
 
@@ -47,7 +71,7 @@ namespace Nofdev.Client
             var dictParams = new Dictionary<string, string>();
 
             var paramsStr = JsonConvert.SerializeObject(args);
-            //logger.Debug(() => $"The params string is {paramsStr}");
+            _logger.LogDebug($"The params string is {paramsStr}");
             dictParams["params"] = paramsStr;
             return dictParams;
         }
@@ -60,9 +84,10 @@ namespace Nofdev.Client
             }
 
             var result = httpMessageSimple.Body;
-            _logger.LogDebug( $"The request return {result}.The method real return type is {realReturnType}");
+            _logger.LogDebug($"The request return {result}");
+            _logger.LogDebug($"The method real return type is {realReturnType}");
 
-            var type = typeof (HttpJsonResponse<>).MakeGenericType(realReturnType);
+            var type = typeof(HttpJsonResponse<>).MakeGenericType(realReturnType);
             dynamic httpJsonResponse = JsonConvert.DeserializeObject(result, type);
 
             if (httpJsonResponse.err == null)
