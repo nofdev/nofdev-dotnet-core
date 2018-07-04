@@ -4,9 +4,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Nofdev.Core</AssemblyName>
     <RootNamespace>Nofdev.Core</RootNamespace>
-    <Product>Nofdev</Product>
-    <Authors>nofdev.org</Authors>
-    <Company>nofdev.org</Company>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Description>Nofdev SOA Core Library</Description>
+    <PackageId>Nofdev.Core</PackageId>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <PackageReleaseNotes>first launch</PackageReleaseNotes>
+    <Version>1.0.0</Version>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
 </Project>

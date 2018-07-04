@@ -9,7 +9,7 @@
     <Product>Nofdev</Product>
     <Version>1.0.1</Version>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Description>Nofdev.Service</Description>
+    <Description>Nofdev RPC service side on asp.net core</Description>
     <PackageId>Nofdev.Service</PackageId>
     <PackageReleaseNotes>add methods</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
@@ -19,12 +19,6 @@
     <Compile Remove="DynamicProxy\**" />
     <EmbeddedResource Remove="DynamicProxy\**" />
     <None Remove="DynamicProxy\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="StartupExtensions.cs" />
-    <Compile Remove="Util\HttpContextHelper.cs" />
-    <Compile Remove="WindsorContainerExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
