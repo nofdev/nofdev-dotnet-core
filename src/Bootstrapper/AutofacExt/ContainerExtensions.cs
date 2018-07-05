@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -9,7 +10,6 @@ using Autofac.Core;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 using Nofdev.Client.Interceptors;
-using Nofdev.Core.SOA;
 using Nofdev.Service;
 using URF.Core.Abstractions;
 using URF.Core.EF;
@@ -53,6 +53,22 @@ namespace Nofdev.Bootstrapper.AutofacExt
         public static void RegisterServices(this ContainerBuilder containerBuilder, string regex, params Assembly[] assemblies)
         {
             RegisterServices(containerBuilder.RegisterDefault, regex, assemblies);
+        }
+
+        public static void RegisterServices(this  ContainerBuilder containerBuilder, ServiceScanOptions options)
+        {
+            var root = AppContext.BaseDirectory;
+            if (options.RpcAssemblyFiles != null)
+                containerBuilder.RegisterRemoteAPI(options.RpcAssemblyFiles.Select(f => Path.Combine(root, f)));
+            options.ServiceModules.ToList().ForEach(m =>
+            {
+                m.Dependencies?.ToList().ForEach(d =>
+                {
+                    containerBuilder.RegisterServices(d.NameRegex, AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(root, d.AssemblyFile)));
+                });
+                containerBuilder.RegisterExposedServices(m.Layer, AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(root, m.EntryAssemblyFile)));
+
+            });
         }
 
         public static void RegisterServices(this ContainerBuilder containerBuilder, string regex, Assembly assembly, Dictionary<Type, Type> depententTypes)
